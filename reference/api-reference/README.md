@@ -12,6 +12,8 @@ For simplicity, in all examples, the default domain for Encedo PPA `my.ence.do` 
 
 The certified configuration version is listed [here](../../preliminary/quick-start.md#validate-firmware-version).
 
+The certified version of this manual is [here](https://docs.encedo.com/hem-api/~/revisions/PGyYmZQ5Gq9qrCNcEm8Z/) (Version hash: [PGyYmZQ5Gq9qrCNcEm8Z](https://github.com/encedo/hem-api-docs/commit/0b085c7d379dd9398c11cd6f6c7335c82ccecd70)).
+
 Request data arguments with `*` (asterisks) are mandatory; the others are optional.
 
 Version: 1.6 (22.10.2025)
