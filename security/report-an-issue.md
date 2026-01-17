@@ -25,7 +25,7 @@ To facilitate the secure submission of security issues, we provide the following
 * User ID: Encedo Security Team <[security@encedo.com](mailto:security@encedo.com)>
 * Fingerprint: 3FBA C5A7 DE79 E913 854C 986F 9BD3 6B1B 0817 A57A
 * Key server link: [https://keys.openpgp.org/vks/v1/by-fingerprint/3FBAC5A7DE79E913854C986F9BD36B1B0817A57A](https://keys.openpgp.org/vks/v1/by-fingerprint/3FBAC5A7DE79E913854C986F9BD36B1B0817A57A)
-* Direct link to the key copy (use if the MIT server is busy): [https://encedo.com/security\_hem.gpg](https://encedo.com/security_hem.gpg)
+* Direct link to the key copy (use if the key server is busy): [https://encedo.com/security\_hem.gpg](https://encedo.com/security_hem.gpg)
 
 
 

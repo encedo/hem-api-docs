@@ -44,8 +44,8 @@ To validate the current version of the firmware and hardware, query the device A
 
 #### Encedo PPA version:
 
-<table><thead><tr><th width="150">Object</th><th width="462">Value</th><th>Version</th></tr></thead><tbody><tr><td><code>hwv</code></td><td>"PPA rev 2.2"</td><td>2.2</td></tr><tr><td><code>blv</code></td><td>"Encedo Secure Bootloader v2.0.1"</td><td>2.0.1</td></tr><tr><td><code>fwv</code></td><td>"Encedo nGINE FW v1.2.1"</td><td>1.2.1</td></tr></tbody></table>
+<table><thead><tr><th width="150">Object</th><th width="462">Value</th><th>Version</th></tr></thead><tbody><tr><td><code>hwv</code></td><td>"PPA rev 2.2"</td><td>2.2</td></tr><tr><td><code>blv</code></td><td>"Encedo Secure Bootloader v2.0.1"</td><td>2.0.1</td></tr><tr><td><code>fwv</code></td><td>"Encedo nGINE FW v1.2.2"</td><td>1.2.2</td></tr></tbody></table>
 
 #### Encedo EPA version:
 
-<table><thead><tr><th width="154">Object</th><th width="456">Value</th><th>Version</th></tr></thead><tbody><tr><td><code>hwv</code></td><td><p>"EPA rev 1.0 @<em>x</em>"</p><p><br><em>(‘x’ denotes the TOE index on PCB)</em></p></td><td>1.0</td></tr><tr><td><code>blv</code></td><td>"Encedo Secure Bootloader v2.0.1"</td><td>2.0.1</td></tr><tr><td><code>fwv</code></td><td>"Encedo nGINE FW v1.2.1"</td><td>1.2.1</td></tr></tbody></table>
+<table><thead><tr><th width="154">Object</th><th width="456">Value</th><th>Version</th></tr></thead><tbody><tr><td><code>hwv</code></td><td><p>"EPA rev 1.0 @<em>x</em>"</p><p><br><em>(‘x’ denotes the TOE index on PCB)</em></p></td><td>1.0</td></tr><tr><td><code>blv</code></td><td>"Encedo Secure Bootloader v2.0.1"</td><td>2.0.1</td></tr><tr><td><code>fwv</code></td><td>"Encedo nGINE FW v1.2.2"</td><td>1.2.2</td></tr></tbody></table>

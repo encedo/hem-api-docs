@@ -16,7 +16,7 @@ The certified version of this manual is [here](https://docs.encedo.com/hem-api/~
 
 Request data arguments with `*` (asterisks) are mandatory; the others are optional.
 
-Version: 1.6 (22.10.2025)
+Version: 1.7 (16.01.2026)
 
 ## System
 

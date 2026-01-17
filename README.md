@@ -31,7 +31,7 @@ The certified configuration version is listed [here](preliminary/quick-start.md#
 
 The certified version of this manual is [here](https://docs.encedo.com/hem-api/~/revisions/PGyYmZQ5Gq9qrCNcEm8Z/) (Version hash: [PGyYmZQ5Gq9qrCNcEm8Z](https://github.com/encedo/hem-api-docs/commit/0b085c7d379dd9398c11cd6f6c7335c82ccecd70)).
 
-Version: 1.6 (22.10.2025)
+Version: 1.7 (16.01.2026)
 
 ## Disclaimer
 
