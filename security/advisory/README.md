@@ -1,7 +1,7 @@
 ---
 description: >-
   The Security Advisory section provides a persistent, chronological list of all
-  published ECVEs and advisories affecting the Encedo HEM.
+  published advisories affecting the Encedo HEM.
 ---
 
 # Advisory
