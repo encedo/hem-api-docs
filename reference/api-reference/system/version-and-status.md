@@ -27,15 +27,13 @@ Get hardware and firmware version information.
 ```javascript
 {
   "hwv": "PPA rev 2.2",
-  "fwv": "Encedo nGINE v0.9.77 (#ff0a263)",
-  "fwk": "/Lbxo5MgU6ZOtVsxxG5jCQ5+4ewxoa1rV8eqMIFFnTA=",
-  "fws": "Z+kAajgVVdSMQjNIvK5FGz0+9rf/JutVClNY6S7GBeQ765NMYET/XgdA61cmMk15waw08oNLuWmUygHK3xWFCA==",
-  "blv": "Encedo Secure Bootloader v1.2 (#e2cf294)",
-  "blk": "RQ96fuFKwYltmJ8Lhx9f5rXoD4lt78p8P4cud36P+zc=",
-  "bls": "8MwowsKkxgEWnl2k0t/eOvsjTbR70poYC2czyPIwKn/hVL68WF3QaQwZ1bxVcYv7g8WEwyzJ2PVnTFAlYQ7hBg==",
-  "sd_csd": "400e00325b590001dd7f7f800a40000d",
-  "sd_cid": "9c534f35634d4a520567b960c30136a1",
-  "uis": "Itbl/q8rkiMXfuUHSq/1ba68eA7BRABXywnuv3gb5lk="
+  "fwv": "Encedo nGINE FW v1.2.2",
+  "fwk": "/7jPJUl1e7jKOQZoYR2PVYj7Z/yjWxUXr4cbOxT2yWY=",
+  "fws": "+m1eRKD2C67r2zMw8n8smFwMEcCXX+aU8zlTO3ZzxBtOxy10KxzscKW2qH6eS0z2BqHgbebjFgmfsAEH+/4iBg==",
+  "blv": "Encedo Secure Bootloader v2.0.1",
+  "blk": "T/BAge1QXxgu9LJ+lYDrBlfupwGZsJP26lVOLEpsd44=",
+  "bls": "jVI0DTN0drzmQFd60OnSrdlbE5Nt2JiiffypkXBENMXv+CtGHZSdoAVhF5YXlXGt2mZ1tPDuCn/SYwGTsxQxDQ==",
+  "uis": "Ah7r6v+b7A3r5CgSa6NQfW/ZHbuPC6ZPWyXz+8gLB7w="
 }
 ```
 {% endtab %}

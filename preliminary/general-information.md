@@ -16,7 +16,7 @@ Here are a few steps the developer should follow to achieve proper operation sec
 * Always check the security of the TLS connection; do not ignore warnings or any other issues with TLS session security. This is critical to achieving the confidentiality of your data (e.g. during encryption/decryption) and of the JWT tokens. The consequences of leaked tokens can be tragic!
 * If your application is using passphrase-based user authentication (user password), keep the runtime environment secure. Do not store passwords in the code (hardcoding)! For web apps, remember that some browser plugins can record keystrokes or steal your password. Use the free Encedo Mobile Authenticator instead of passwords if possible.
 * Check the logs from time to time :) The logging mechanism of every security-related activity by Encedo HEM is a very powerful feature. Consider integrating the Encedo HEM logs deeply with SIEM or other automated security monitoring tools.
-* Temperature Operating Range: 0 - 45 'C
+* Temperature Operating Range: 0 - 40 'C
 * Humidity: 10-90%&#x20;
 * Electrical Operating Range:
   * Encedo PPA: USB 2.0 HighSpeed compliant 4,75V-5,25V, 100mA
@@ -230,7 +230,7 @@ A few comments are needed here:
 * The `masterkey` object, like the `userkey` object is the Administrator and User x25519 public keys, generated deterministically based on the passphrase.
 * Objects `jti`, `aud` and  `exp` are a copy of the one received by Phase 1 of the Initialisation process (`spk` => `aud`);
 * The `iss` object is a duplication of the `masterkey` object (a requirement of the implemented modified version of JWT, as commented above), which is a Master user public key;
-* The whole JWT token is signed (HS256), where the secret is a result of ECDH between the `aud` (public key) and the ephemeral private key.
+* The whole JWT token is signed (HS256), where the secret is the result of ECDH between the `aud` (public key) and the ephemeral private key.
 
 ## Events and logs
 
