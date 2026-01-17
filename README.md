@@ -27,9 +27,11 @@ This documentation is for `Encedo nGINE v.1.0` and is a part of a Common Criteri
 
 This API is in version v1, and all endpoints, parameters, arguments, return data, or error codes are persistent.
 
+The certified configuration version is listed [here](https://docs.encedo.com/hem-api/~/revisions/1sgifhZ64anc2fyTUTgt/reference/api-reference/system/version-and-status).\
+\
+The certified version of this manual is [here](https://docs.encedo.com/hem-api/~/revisions/1sgifhZ64anc2fyTUTgt/) (Version hash: [1sgifhZ64anc2fyTUTgt](https://github.com/encedo/hem-api-docs/commit/33287dd3de1389dd7b548501f31776fee936331d)).
 
-
-Version: 1.7 (17.01.2026)
+Version: 1.7b (17.01.2026)
 
 ## Disclaimer
 
