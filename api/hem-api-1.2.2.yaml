@@ -3,7 +3,8 @@ openapi: 3.0.3
 # Encedo nGINE REST API — OpenAPI 3.0.3 description for firmware release 1.2.2.
 #
 # This file is the single source of truth for the API reference published at
-# https://encedo.github.io/hem-api-docs/ (rendered with docusaurus-plugin-openapi-docs).
+# https://encedo.github.io/hem-api-docs/: the hand-written reference pages are kept in
+# sync with it (see AGENTS.md) and the interactive API tester renders it directly.
 # One file per API version: api/hem-api-<version>.yaml.
 #
 # Derived from the firmware source (Firmware/src/api.h, api.c, api_auth.c, api_system.c,

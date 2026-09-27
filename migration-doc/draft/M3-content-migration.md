@@ -1,37 +1,41 @@
-# M3 — Non-API content migration
+# M3 — Content migration (44 pages) + two docs instances + navbar dropdown (revised)
 
 State: draft
 
 ## Goal
-Convert the 6 non-API pages (Welcome, Quick Start, General information, Report an issue, Advisory, Hall of fame) to MDX with a scripted, idempotent converter; restore the `SUMMARY.md` structure; fix links; keep the GitBook look (subtitle, hints, tabs, cards). `reference/api-reference/README.md` is not converted as a page: its cards are superseded by the generated tag categories and its conventions text moves into `info.description` in M4.
+All 44 legacy GitBook pages converted to MDX in the GitBook style by a scripted, idempotent converter; sidebar mirroring `SUMMARY.md`; two variants of the reference ("1.2.2" at `/`, "1.2.2 Diag" at `/diag`) from one source folder; navbar version dropdown.
 
 ## Deliverables
-- `migration-doc/scripts/gitbook2mdx.py`: reads `legacy-gitbook/`, writes `docs/`, reports unconverted constructs and unresolved links, exits non-zero on either.
-- `docs/index.md`, `docs/preliminary/quick-start.md`, `docs/preliminary/general-information.md`, `docs/security/report-an-issue.md`, `docs/security/advisory/index.md`, `docs/security/advisory/hall-of-fame.md`.
-- `static/img/PGC_1323.jpg`, `static/img/PGC_1400.jpg` (`git mv` from `legacy-gitbook/.gitbook/assets/`).
-- `src/components/ContentRef.tsx`: GitBook-style card wrapping `@theme/DocCard` so the description comes from doc metadata.
-- `sidebars.ts` mirroring `SUMMARY.md`: Welcome; Preliminary (Quick Start, General information); Security (Report an issue, Advisory ▸ Hall of fame); Reference (API Reference ▸ tags). Section headers as `type: 'html'` items.
-- `src/css/custom.css`: minimal `.doc-subtitle` and `.sidebar-heading` (finalized in M5).
+- `migration-doc/scripts/gitbook2mdx.py` (Python 3.12 + PyYAML): reads `legacy-gitbook/`, writes `docs/`; reports unconverted constructs and unresolved links; non-zero exit on any.
+- Components `src/components/api/{Endpoint,Req,Roles,Scope,ResponseCodes,ResponseCode}.tsx`, `src/components/ContentRef.tsx`, registered globally in `src/theme/MDXComponents.tsx`; ejected `src/theme/DocItem/Content/index.tsx` rendering `metadata.description` as `.doc-subtitle`.
+- `docs/**`: 44 pages (`.mdx` for API pages, `.md` for prose; section `README.md` → `index.mdx`), `static/img/PGC_1323.jpg`, `static/img/PGC_1400.jpg`; placeholder `docs/reference/api-reference/diagnostics/index.mdx`.
+- `sidebars.ts` (SUMMARY order, `html` section headers), `sidebars-diag-items.json`, `sidebars-diag.ts` (imports the base sidebar and appends the Diagnostics category), `tsconfig.json` `resolveJsonModule: true`.
+- `scripts/sync-diag-docs.mjs` (copy `docs/` → `docs-diag/`; `--watch`), scripts `sync:diag`, `prebuild`, `prestart`; `.gitignore` `/docs-diag/`, `/diag_versioned_docs/`, `/diag_versioned_sidebars/`, `/diag_versions.json`.
+- `docusaurus.config.ts`: default instance `exclude` Diagnostics pages + function `editUrl`; second instance `id: 'diag'`, `path: 'docs-diag'`, `routeBasePath: 'diag'`, `versions.current: {label: '1.2.2 Diag', noIndex: true}`; sitemap ignore for `diag/**`; navbar dropdown `v1.2.2` → "1.2.2" (`/`) and "1.2.2 Diag" (`/diag`) with `activeBaseRegex`.
+- Minimal CSS for the components (final look in M5).
+
+## Conversion rules
+See `PLAN.md` → "Converter" table (authoritative). Key points: H1 removed (title from frontmatter, subtitle from description); `#### Allowed users` tabs → `<Roles user master={false} ext />`; `#### Required access scope` tabs → `<Scope main alt note />`; `<mark>METHOD</mark> URL` → `<Endpoint method path operationId />` with spec path-param names and operationId from a spec-derived map; adjacent duplicate H2s merged (`## A` + `### B`); response-code tabs → `<ResponseCodes>`/`<ResponseCode code title>`; red `*` → `<Req />`; hints → admonitions; other tabs → `<Tabs>`; content-refs → `<ContentRef id />`; single-line HTML tables → GFM when inline-only, else cleaned HTML; ```javascript JSON → ```json; absolute `docs.encedo.com` links → relative file links (certified-revision links stay external); `endedo.com` typo fixed; images → `/img/`; `&#x20;` removed; MDX escapes for bare `{ } <`; enum heading alias "Possible `key` type" → "Possible `type` values".
 
 ## Steps
-1. Write the converter as a per-file pipeline: frontmatter → block constructs (hint, tabs, content-ref, tables) → inline (`<mark>`, entities, emoji, escapes) → links (LINK_MAP built from `legacy-gitbook/SUMMARY.md` + API anchor map) → report.
-2. Conversion rules (authoritative table in PLAN.md M3): `description` kept as meta + `sidebar_label` + `<p className="doc-subtitle">`; `cover` dropped; `{% hint %}` → admonitions; `{% tabs %}` → `<Tabs>/<TabItem>`; `{% content-ref %}` → `<ContentRef />`; folder `README.md` → `index.md`; `docs.encedo.com/hem-api/...#anchor` → internal routes (API anchors → generated operation routes; `~/revisions/...` links stay external); `endedo.com` → `encedo.com`; `&#x20;` removed, `&#x26;` → `&`; HTML tables → GFM when inline-only else cleaned HTML (`width` stripped, `<br>` → `<br />`); emoji span → emoji; heading anchor `<a>` dropped; images → `/img/...`; `javascript` fences holding JSON → `json` (`# header` style fences → `text`); bare `{ } <` in prose escaped for MDX v3.
-3. Run the converter; `git mv` the photos; write `ContentRef.tsx`; complete `sidebars.ts`; build with the three `throw` settings; iterate until clean.
-4. Commit `M3: migrate non-API pages to Docusaurus`.
+1. Build the spec-derived method+path → operationId map; write the converter; run; iterate until the report is clean.
+2. Components + MDXComponents + ejected Content; `git mv` photos.
+3. Sidebars (base + diag), sync script, second instance, dropdown; build both variants.
+4. Commit `M3: migrate all pages to Docusaurus; 1.2.2 and 1.2.2 Diag variants`.
 
 ## Acceptance criteria
-- `npm run build` passes (links and anchors verified by Docusaurus).
+- `npm run build` passes with the three `throw` settings; `npm run typecheck` passes.
+- `grep -rn '{%\|&#x20;\|<mark\|\.gitbook' docs/` is empty; converter reports 0 unconverted constructs.
+- `build/index.html` and `build/diag.html` exist; no `diagnostics` page under `build/reference/`; the Diagnostics category appears only in the Diag variant; the dropdown switches variants; edit links point at `docs/`.
 - Sidebar order equals `SUMMARY.md`.
-- Welcome renders the two photos and four cards; General information renders 2 tab groups, 3 tables, 10 code blocks; Quick Start renders the info admonition and both version tables; Hall of fame renders the emoji.
-- Converter run reports zero unconverted constructs; `grep -rn '{%\|&#x20;\|\.gitbook' docs/` is empty.
 
 ## Verification
-- Automated: build, converter report, grep.
-- User: compare each of the 6 pages side by side with docs.encedo.com (content parity, subtitle placement, card look).
+- Automated: build, typecheck, greps, converter report.
+- User: compare create-a-key, configuration, audit-log, external-authenticator/registration, Welcome and General information with docs.encedo.com on the preview (both variants).
 
 ## Open questions
-- Reproduce the Unsplash cover image on Welcome as a banner, or drop it (recommended: drop)?
-- Keep the "Version: 1.7b (17.01.2026)" line and the certified-revision GitBook links on Welcome as-is?
+- Reproduce the Unsplash cover on Welcome or drop it (recommended: drop)?
+- Keep the "Version: 1.7b (17.01.2026)" line and certified-revision links on Welcome as-is?
 
 ## Conclusions & hand-over
 _(filled when done)_

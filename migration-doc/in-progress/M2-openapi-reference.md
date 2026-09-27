@@ -1,59 +1,42 @@
-# M2 — OpenAPI reference integration
+# M2 — API tester (Scalar) + remove generated reference (revised)
 
-State: in-progress (accepted 2026-09-27)
+State: in-progress (revision 2 accepted with the plan on 2026-09-27)
+
+## History
+The first M2 (commit `ad075c9`) generated the API reference with `docusaurus-plugin-openapi-docs`. The user rejected the look; the plugin, theme and sass plugin are removed by this revised milestone. Kept from the first M2: spec renamed to `api/hem-api-1.2.2.yaml` with a new header comment, `x-displayName` tag labels in GitBook order, `redocly.yaml` + `npm run lint:spec` (also in both workflows), `staticDirectories: ['static', 'api']` so the spec is downloadable from the site.
 
 ## Goal
-Generated one-page-per-operation API reference at `/reference/api/*`, grouped by tag with friendly labels, generated at build time (gitignored), spec linted in CI, spec downloadable from the site, versions structure ready for a second API version.
+A separate, interactive API tester page rendering the full OpenAPI file with Scalar at `/api-tester`, and a codebase free of the generated-reference wiring.
 
 ## Deliverables
-- `git mv api/openapi.yaml api/hem-api-1.2.2.yaml`; header comment updated (this file is the documentation's source of truth; hand-maintained alongside `Firmware/src/api.h`).
-- Spec: `x-displayName` on the 7 tags; `tags:` reordered to GitBook order: system → "System", auth → "Authorization", keymgmt → "Key management", crypto → "Cryptography operations", logger → "Audit log", storage → "Storage", diag → "Diagnostics (DIAG builds only)".
-- Dependencies: `docusaurus-plugin-openapi-docs@^5.2`, `docusaurus-theme-openapi-docs@^5.2`, `docusaurus-plugin-sass@^0.2.7`; dev `@redocly/cli`.
-- `redocly.yaml` (extends `recommended`, rules tuned to zero errors; warnings reviewed).
-- `.gitignore` += `docs/reference/api/`.
-- `docusaurus.config.ts`: `staticDirectories: ['static', 'api']`, `docItemComponent: '@theme/ApiItem'`, plugin + theme config (see PLAN.md M2), `themeConfig.languageTabs` (curl, python, javascript).
-- `sidebars.ts`: import the generated `./docs/reference/api/sidebar`, filter out the info doc, nest the slice in a category "API Reference" linked to the info page, under a "Reference" section header.
-- `package.json` scripts: `gen-api` = `docusaurus gen-api-docs all`, `clean-api` = `docusaurus clean-api-docs all`, `prebuild`/`prestart`/`pretypecheck` = `npm run gen-api`, `lint:spec` = `redocly lint`.
-- Workflows: `npm run lint:spec` step before build (both).
-
-## Inputs from M1
-- Docusaurus 3.10 builds with the Rspack "faster" bundler by default (`@docusaurus/faster` installed). The openapi-docs demo runs with it enabled, but verify the theme's SCSS builds; fallback `future.faster: false`.
-- Preview URL for reviews: `http://192.168.0.153:3000/hem-api-docs/` (`npm run serve -- --host 0.0.0.0 --port 3000 --no-open`).
+- `npm uninstall docusaurus-plugin-openapi-docs docusaurus-theme-openapi-docs docusaurus-plugin-sass`; `npm i -E @scalar/docusaurus@0.8.44`.
+- `docusaurus.config.ts`: remove the OpenApiPlugin import, `docItemComponent`, the sass/openapi plugin entries, `themes`, `languageTabs`; add the Scalar plugin entry (`label: 'API tester'`, `route: '/api-tester'`, `showNavLink: false`, `configuration: { url: baseUrl + specFile, proxyUrl: '', hideModels: true, authentication: { preferredSecurityScheme: 'bearerAuth' } }`) and a navbar item `{to: '/api-tester', label: 'API tester'}`.
+- `package.json`: remove `gen-api`, `clean-api`, `prebuild`, `prestart`, `pretypecheck`.
+- `.gitignore`: remove `/docs/reference/api/`; delete the untracked `docs/reference/api/`.
+- `sidebars.ts`: static list (Welcome, Preliminary header, Quick Start, Reference header + placeholder link to the tester).
+- Spec header comment: no mention of the plugin.
+- README: replace the generated-pages paragraphs with the tester note.
+- `migration-doc`: this file, `PLAN.md` (revision 2), `decisions.md`, drafts M3–M6 rewritten.
 
 ## Steps
-1. Rename the spec, edit the header comment, add `x-displayName`, reorder tags. Run `npx @redocly/cli lint` and fix or rule-tune until zero errors.
-2. Install deps; wire plugin, theme, sass plugin, `docItemComponent`, `staticDirectories`.
-3. Add scripts and `.gitignore` entry; run `npm run gen-api`; inspect generated ids (`reference/api/<kebab operationId>`, tag pages `reference/api/<tag>`, info page `reference/api/<kebab info.title>`).
-4. Write `sidebars.ts` import + filter; build; fix broken links/anchors.
-5. Test `versions: {}` (empty) — if harmless keep it live so adding a version is additive; otherwise keep a commented template.
-6. Update workflows; commit `M2: OpenAPI reference generated from api/hem-api-1.2.2.yaml`.
+1. Swap packages; fix scripts. 2. Strip config/sidebars/gitignore; remove generated folder. 3. Add Scalar entry + navbar item; read `node_modules/@scalar/docusaurus/dist/*.js` to confirm route normalisation and options. 4. `npm run lint:spec && npm run typecheck && npm run build`; check `build/api-tester.html`. 5. Serve on `0.0.0.0:3000`; commit `M2: Scalar API tester, generated reference removed`.
 
 ## Acceptance criteria
-- `npm run lint:spec` exits 0.
-- `npm run build` passes; `docs/reference/api/` contains 69 `*.api.mdx`, 7 `*.tag.mdx`, 1 `*.info.mdx` and is untracked.
-- Sidebar: Reference → API Reference → System / Authorization / Key management / Cryptography operations / Audit log / Storage / Diagnostics, with method badges.
-- Info page shows the `v1.2.2` badge and a Download button that serves the YAML.
-- `x-required-scope` is visible on `/reference/api/create-key`.
-- CI green after push; Pages updated.
+- lint, typecheck, build pass; `build/api-tester.html` exists; `grep -rn "openapi-docs\|plugin-sass" package.json docusaurus.config.ts sidebars.ts` is empty; `git status` clean.
+- Tester loads the spec (7 tags, 69 operations), Authorization scheme visible, light/dark OK.
 
 ## Verification
-- Automated: lint, build, typecheck, page counts.
-- User: look of an operation page (docs left, request/response explorer right), tag pages, info page, download link; decide the open questions below.
+- Automated: the commands above.
+- User: open `http://192.168.0.153:3000/hem-api-docs/api-tester`; optionally send a request to a device (needs device CORS `origin` allowing the site origin and its TLS certificate trusted).
 
 ## Open questions
-- ~~Keep `info.title` "Encedo nGINE REST API" or rename?~~ Resolved 2026-09-27: keep "Encedo nGINE REST API".
-- Is the raw `x-required-scope` code block acceptable? Fallback: render the scope as a sentence in the description and set `showExtensions: false`.
-- Keep the "Send API Request" panel (`hideSendButton: false`)?
-- `install_bl` and `upload_bootldr` are tagged `[system, diag]` and appear twice; keep or single-tag them?
+- None blocking. Scalar option names (`proxyUrl`, `hideModels`, dark-mode sync) are verified against the installed version during implementation.
 
 ## Conclusions & hand-over
-Implemented 2026-09-27; awaiting the user's review on the preview.
+Implemented 2026-09-27 (revision 2); awaiting the user's review of the tester on the preview.
 
-- Spec renamed to `api/hem-api-1.2.2.yaml`; header comment rewritten; `x-displayName` added; tags reordered (system, auth, keymgmt, crypto, logger, storage, diag). `info.title` kept ("Encedo nGINE REST API").
-- `npm run lint:spec` (Redocly 2.x, `recommended`): valid, zero warnings after turning off `info-license` (no license object) and `operation-4xx-response` (diag endpoints answer only 200).
-- `npm run gen-api` output: 69 `*.api.mdx`, 7 `*.tag.mdx`, 1 `*.info.mdx` plus per-operation JSON side files and `sidebar.ts`. Generated ids: operations `reference/api/<kebab operationId>` (e.g. `create-key`, `get-system-status`), tag pages `reference/api/<tag>`, info page `reference/api/encedo-ngine-rest-api`.
-- `npm run build`: 80 HTML pages (77 API + Welcome + Quick Start + 404); the spec is served at `/hem-api-docs/hem-api-1.2.2.yaml`; the Rspack ("faster") bundler builds the openapi theme's SCSS without issues. `npm run typecheck` passes.
-- Rendering checks in the built HTML: version badge "Version: 1.2.2" and download link on the info page; sidebar categories use the `x-displayName` labels; `x-required-scope` renders as a fenced code block (`x-required-scope: "keymgmt:gen (prefix match); role M denied"`) before the description; method badges (`api-method get/post/delete`) on sidebar items. The "Send API Request" panel renders client-side only (not visible in static HTML).
-- `versions: {}` test: harmless (no crash, badge still shown) but it creates no `versions.json`, so the version selector cannot be wired until a real version entry exists. Decision: keep the commented `versions` template in `docusaurus.config.ts`; the README recipe (M6) must say "add the entry, run `npm run gen-api`, then import `versions.json` in `sidebars.ts`".
-- `sidebars.ts` imports the generated slice, filters the info item out (it is the "API Reference" category link) and derives item types from `SidebarsConfig` (the item types are not exported publicly).
-- Hand-over to M3/M4: legacy links to API pages map to `/reference/api/<kebab operationId>`; descriptions are compiled as MDX (markdown tables/admonitions should work; smoke-test in M4). Preview: `http://192.168.0.153:3000/hem-api-docs/reference/api/create-key`.
+- Removed `docusaurus-plugin-openapi-docs`, `docusaurus-theme-openapi-docs`, `docusaurus-plugin-sass` and all their wiring (config, `themes`, `languageTabs`, `docItemComponent`, `gen-api`/`clean-api`/`pre*` scripts, `.gitignore` entry, generated folder, generated-sidebar import). `sidebars.ts` is static again with an "API tester" link under the Reference header.
+- Added `@scalar/docusaurus@0.8.44` (pinned). Facts verified in `node_modules/@scalar/docusaurus/dist/`: options are `label`, `route`, `cdn`, `showNavLink`, `configuration` (no `id`, single instance); the route is `normalizeUrl([baseUrl, route])`; `showNavLink: true` would push a navbar item, so we declare our own; the renderer is a **runtime CDN script** (`https://cdn.jsdelivr.net/npm/@scalar/api-reference`, unpinned by default) → pinned via `cdn: '…@scalar/api-reference@1.72.1'`; the configuration is serialized into the route module and executed client-side (`window.Scalar.createApiReference`), so the page is empty in static HTML and needs JavaScript + CDN access. Scalar has its own dark-mode toggle (no Docusaurus colour-mode sync) → left visible.
+- Configuration: `url: /hem-api-docs/hem-api-1.2.2.yaml` (served from `api/` via `staticDirectories`), `proxyUrl: ''` (direct browser → device requests), `hideModels: true`, `authentication.preferredSecurityScheme: 'bearerAuth'`.
+- `npm run lint:spec`, `npm run typecheck`, `npm run build` pass; pages: `/`, `/preliminary/quick-start`, `/api-tester`, `/404`; spec at `/hem-api-docs/hem-api-1.2.2.yaml`.
+- Hand-over to M3/M4: the tester will only show an Authorization input for operations that declare `security: [{bearerAuth: []}]` (the spec currently has none → M4 spec edit). Requests from the browser to a device require the device CORS `origin` setting to allow the site origin and its TLS certificate to be trusted (document in AGENTS.md/README). Preview: `http://192.168.0.153:3000/hem-api-docs/api-tester`.

@@ -17,7 +17,6 @@ Source of the developer documentation for the Encedo HEM REST API, built with
 | `docs/` | Documentation pages (Markdown/MDX). `docs/index.md` is the landing page. |
 | `api/` | OpenAPI specification files, one per API version (`hem-api-<version>.yaml`). Single source of truth for the API reference. |
 | `redocly.yaml` | Lint configuration for the OpenAPI files (`npm run lint:spec`). |
-| `docs/reference/api/` | Generated API reference pages (gitignored, rebuilt on every build). |
 | `src/css/custom.css` | Site styling. |
 | `static/` | Static assets (images, favicon). |
 | `docusaurus.config.ts` | Site configuration (title, URL, navbar, footer, plugins). |
@@ -37,9 +36,9 @@ npm run build          # production build into build/ (fails on broken links or 
 npm run typecheck      # type-check the TypeScript config files
 ```
 
-The API reference pages under `docs/reference/api/` are **generated** from `api/hem-api-<version>.yaml`
-by `npm run gen-api` (run automatically before `start`, `build` and `typecheck`) and are not committed.
-Edit the OpenAPI file, never the generated pages.
+The OpenAPI file in `api/` is the single source of truth for the API. The interactive **API tester**
+page (`/api-tester`) renders it directly; the hand-written reference pages are kept consistent with it
+(see the maintenance instructions, added later in the migration).
 
 ### Preview on a headless server
 

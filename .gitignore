@@ -7,8 +7,6 @@
 # Generated files
 /.docusaurus
 /.cache-loader
-# API reference pages generated from api/*.yaml by `npm run gen-api`
-/docs/reference/api/
 
 # Misc
 .DS_Store

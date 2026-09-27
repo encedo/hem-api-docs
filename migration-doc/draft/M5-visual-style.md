@@ -1,36 +1,26 @@
-# M5 — Visual style
+# M5 — Visual style (revised)
 
 State: draft
 
 ## Goal
-Encedo branding and a GitBook-like feel: logo and favicon, `#9B34DB` purple palette (light, plus a lighter dark-mode ramp), self-hosted Inter and IBM Plex Mono, uppercase sidebar section headers, link cards, navbar and footer, local search, dark mode.
+Encedo branding and a GitBook-like feel across both variants and the tester: logo/favicon, `#9B34DB` palette (light + lighter dark ramp), self-hosted Inter and IBM Plex Mono, styled API components, sidebar section headers, cards, local search, footer.
 
 ## Deliverables
-- `static/img/encedo-logo.png` (downloaded with curl from the public GitBook CDN URL recorded in PLAN.md) and `static/img/favicon.png` (resized via `npx sharp-cli`, or the logo reused).
-- Dependencies: `@easyops-cn/docusaurus-search-local` (`docsRouteBasePath: '/'`, `hashed: true`, `indexBlog: false`), `@fontsource-variable/inter` (or `@fontsource/inter`), `@fontsource/ibm-plex-mono`.
-- `src/css/custom.css`: Infima primary ramp for light and dark, font variables, `.sidebar-heading`, `.doc-subtitle`, DocCard hover, checks of the openapi theme's method badges and explorer panel in dark mode.
-- `docusaurus.config.ts`: navbar (logo, title "Encedo HEM API", links "encedo.com" and "GitHub"), footer (Encedo links, Report a security issue, Examples repo, copyright "Encedo Limited" + manual version line), search theme.
-
-## Steps
-1. Download logo; derive favicon; wire `favicon` and navbar logo.
-2. Add fonts and palette CSS; verify both colour modes.
-3. Style sidebar section headers (small caps, muted) and the subtitle.
-4. Add local search; build; test queries.
-5. Commit `M5: Encedo branding, fonts, sidebar sections, local search`.
+- `static/img/encedo-logo.png` (curl from the public GitBook CDN URL in PLAN.md) and `favicon.png`.
+- Dependencies `@easyops-cn/docusaurus-search-local` (docs route `/`, `hashed: true`, exclude the `diag/` route from the index), `@fontsource-variable/inter` (or `@fontsource/inter`), `@fontsource/ibm-plex-mono`.
+- `src/css/custom.css`: Infima primary ramp for light/dark, font variables, method badge colours (GET blue, POST green, DELETE red), red `<Req />`, `Roles`/`Scope` rows, `ResponseCodes` tabs, table header styling, `.sidebar-heading`, `.doc-subtitle`, DocCard hover, Scalar accent (`--scalar-color-accent`).
+- `docusaurus.config.ts`: navbar logo + title, footer links (encedo.com, Report a security issue, Examples repo) and copyright with the manual version line, search theme.
 
 ## Acceptance criteria
-- Build passes; fonts served from `build/assets/fonts/` (no Google Fonts request).
-- Palette applied in light and dark; purple links legible on dark.
-- Search returns hits for "keymgmt:gen" and "Hall of fame".
-- Sidebar section headers are non-collapsible labels like GitBook's.
+- Build passes; fonts served from `build/assets/fonts/`; palette applied in both modes; search finds "keymgmt:gen" and "Hall of fame" once (no Diag duplicates); section headers are non-collapsible labels.
 
 ## Verification
-- Automated: build; grep for `fonts.googleapis` in `build/` is empty; search index files present.
-- User: resemblance to docs.encedo.com in light and dark, logo size, contrast, search UX.
+- Automated: build; `grep -r fonts.googleapis build/` empty; search index present.
+- User: resemblance to docs.encedo.com in light and dark, both variants and the tester; logo size; contrast.
 
 ## Open questions
 - Default colour mode: follow system (recommended) or force light?
-- Footer wording ("Powered by Docusaurus" kept or removed)?
+- Footer wording.
 
 ## Conclusions & hand-over
 _(filled when done)_
