@@ -1,6 +1,6 @@
 # M1 — Docusaurus skeleton + CI/CD to GitHub Pages
 
-State: draft
+State: in-progress (accepted 2026-09-27)
 
 ## Goal
 A working deploy loop (GitHub Actions → GitHub Pages) with placeholder content, so every later milestone can be reviewed at https://encedo.github.io/hem-api-docs/ and via `docusaurus serve` on the server.
@@ -37,8 +37,14 @@ A working deploy loop (GitHub Actions → GitHub Pages) with placeholder content
 - User: perform the GitHub configuration, push `docusaurus`, confirm the Actions run and the URL. Optionally check `serve` on the server.
 
 ## Open questions
-- Is port 3000 reachable on the server, or will you use the SSH tunnel?
-- `editUrl` will point at `main` (edit links on the live site). OK?
+Resolved 2026-09-27:
+- Preview access: direct to the server IP on port 3000 (`npm run serve -- --host 0.0.0.0 --port 3000` → `http://<server-ip>:3000/hem-api-docs/`); SSH tunnel documented as the alternative.
+- `editUrl` points at `main`.
 
 ## Conclusions & hand-over
-_(filled when done)_
+Implemented 2026-09-27 (awaiting the user's GitHub configuration, push and Pages check).
+
+- Files: `package.json` + `package-lock.json`, `tsconfig.json`, `.nvmrc`, `.gitignore`, `docusaurus.config.ts`, `sidebars.ts`, `src/css/custom.css`, `docs/index.md`, `docs/preliminary/quick-start.md`, `static/.nojekyll`, `static/img/.gitkeep`, `.github/workflows/deploy.yml`, `.github/workflows/pr-check.yml`, root `README.md` v1. GitBook sources moved to `legacy-gitbook/`.
+- Verified locally: `npm run build` (3 HTML pages: `/`, `/preliminary/quick-start`, `/404`; sitemap; assets under `/hem-api-docs/`), `npm run typecheck`, `npm run serve -- --host 0.0.0.0 --port 3000` → `http://192.168.0.153:3000/hem-api-docs/`.
+- Deviation from the draft: Docusaurus 3.10 uses the Rspack "faster" bundler by default, so `@docusaurus/faster` is a required dependency (the build fails with `ERR_MODULE_NOT_FOUND` without it). Template pins `typescript ~6.0.2` with `ignoreDeprecations: "6.0"`. `input.txt` is ignored locally via `.git/info/exclude`, not the shared `.gitignore`.
+- Hand-over to M2: the bundler is Rspack; the openapi-docs plugin demo runs with `faster` enabled, but verify the theme's SCSS builds under it (fallback: `future.faster: false`). Preview URL for reviews: `http://192.168.0.153:3000/hem-api-docs/`. The `github-pages` environment branch rule must allow `docusaurus` (README → GitHub configuration).

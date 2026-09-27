@@ -1,70 +1,80 @@
----
-cover: >-
-  https://images.unsplash.com/photo-1542831371-29b0f74f9713?crop=entropy&cs=srgb&fm=jpg&ixid=MnwxOTcwMjR8MHwxfHNlYXJjaHwzfHxoYWNrZXJ8ZW58MHx8fHwxNjQ3MzM5MDA5&ixlib=rb-1.2.1&q=85
-coverY: 0
----
+# Encedo HEM API Developer Manual
 
-# Welcome
+Source of the developer documentation for the Encedo HEM REST API, built with
+[Docusaurus](https://docusaurus.io/) and published with GitHub Pages.
 
-## Welcome to Encedo HEM API
+- Live site: <https://encedo.github.io/hem-api-docs/>
+- API specification (single source of truth for the API reference): [`api/`](api/)
 
-Welcome to Encedo HEM API! Encedo HEM is a commercial version of the Common Criteria certification pending product `Encedo nGINE HSM v1.0`.&#x20;
+> **Migration in progress.** This repository is being migrated from GitBook to Docusaurus.
+> Plan, status and milestone notes live in [`migration-doc/`](migration-doc/) (temporary folder).
+> The original GitBook sources are kept in `legacy-gitbook/` until the migration is complete.
 
-The Encedo HEM is a general-purpose, natively Internet-oriented hardware security module (HSM) that provides advanced key management and basic cryptography functions, operating on the keys it manages. The HEM communicates with host systems through its network interface (Ethernet over a USB connection) and supports RESTful HTTP(s) based API.&#x20;
+## Repository layout
 
-There are two possible configurations (physical implementation) on the market:
+| Path | Purpose |
+|---|---|
+| `docs/` | Documentation pages (Markdown/MDX). `docs/index.md` is the landing page. |
+| `api/` | OpenAPI specification files. |
+| `src/css/custom.css` | Site styling. |
+| `static/` | Static assets (images, favicon). |
+| `docusaurus.config.ts` | Site configuration (title, URL, navbar, footer, plugins). |
+| `sidebars.ts` | Sidebar structure. |
+| `.github/workflows/` | CI: `deploy.yml` builds and deploys to GitHub Pages, `pr-check.yml` builds pull requests. |
 
-* Encedo PPA (Personal Privacy Assistant), USB thumb drive size form factor, and&#x20;
-* Encedo EPA (Enterprise Privacy Appliance), 19” rack mount network appliance.
+## Prerequisites
 
-![Encedo EPA 4 nodes versions](.gitbook/assets/PGC_1400.jpg)
+- Node.js 24 (see `.nvmrc`; any Node ≥ 20 works) and npm.
 
-![Encedo PPA in the spotlight](.gitbook/assets/PGC_1323.jpg)
+## Build and preview
 
-## The version of this documentation
+```bash
+npm ci                 # install dependencies (uses package-lock.json)
+npm run build          # production build into build/ (fails on broken links or anchors)
+npm run typecheck      # type-check the TypeScript config files
+```
 
-This documentation is for `Encedo nGINE v.1.0` and is a part of a Common Criteria _"Guidance documentation"_ (AGD) and covers all API operations.&#x20;
+### Preview on a headless server
 
-This API is in version v1, and all endpoints, parameters, arguments, return data, or error codes are persistent.
+The site is built with `baseUrl: /hem-api-docs/`, so the preview lives under that path.
 
-The certified configuration version is listed [here](https://docs.encedo.com/hem-api/~/revisions/1sgifhZ64anc2fyTUTgt/reference/api-reference/system/version-and-status).\
-\
-The certified version of this manual is [here](https://docs.encedo.com/hem-api/~/revisions/1sgifhZ64anc2fyTUTgt/) (Version hash: [1sgifhZ64anc2fyTUTgt](https://github.com/encedo/hem-api-docs/commit/33287dd3de1389dd7b548501f31776fee936331d)).
+```bash
+npm run build
+npm run serve -- --host 0.0.0.0 --port 3000
+# open http://<server-ip>:3000/hem-api-docs/
+```
 
-Version: 1.7b (17.01.2026)
+`npm start` runs the development server with hot reload, also bound to `0.0.0.0:3000`
+(it does not run the broken-link checks; use `npm run build` for that).
 
-## Disclaimer
+If port 3000 is not reachable, use an SSH tunnel instead:
+`ssh -L 3000:127.0.0.1:3000 <user>@<server>` and open <http://localhost:3000/hem-api-docs/>.
 
-Think of Encedo HEM as your digital front-door key. Without it, your most valuable assets remain locked away. DO NOT LEAVE YOUR ENCEDO HEM UNATTENDED.
+## Deployment
 
-## Want to jump right in?
+Every push to `main` (and, during the migration, to `docusaurus`) runs
+`.github/workflows/deploy.yml`, which builds the site and publishes it to GitHub Pages.
+Pull requests run `.github/workflows/pr-check.yml` (build only).
 
-Feeling like an eager beaver? Jump into the quick-start docs and get making your first request:
+### GitHub configuration (one-time)
 
-{% content-ref url="preliminary/quick-start.md" %}
-[quick-start.md](preliminary/quick-start.md)
-{% endcontent-ref %}
+1. **Settings → Pages → Build and deployment → Source:** select **GitHub Actions**.
+   Without this, the `deploy` job fails with an error such as
+   `Error: Failed to create deployment ... Not Found` or `Get Pages site failed`.
+2. **Settings → Environments → `github-pages` → Deployment branches and tags:**
+   GitHub creates this environment automatically and usually allows only `main`.
+   While the migration is deployed from the `docusaurus` branch, add `docusaurus`
+   (or choose "No restriction"). Otherwise the `deploy` job fails with
+   `Branch "docusaurus" is not allowed to deploy to github-pages due to environment protection rules`.
+   Remove the extra branch again once the migration is merged into `main`.
+3. **Settings → Actions → General:** Actions must be enabled for the repository.
+   The default `GITHUB_TOKEN` permission can stay "Read repository contents"; the workflow
+   requests `pages: write` and `id-token: write` itself.
 
-## Want to get general information?
+The site URL and base path are set once at the top of `docusaurus.config.ts`
+(`url` and `baseUrl`). Switching to a custom domain later means changing those two values,
+adding the DNS record and setting the custom domain in **Settings → Pages**.
 
-Get general information first before deep diving into API details.
+## License
 
-{% content-ref url="preliminary/general-information.md" %}
-[general-information.md](preliminary/general-information.md)
-{% endcontent-ref %}
-
-## Want to deep dive?
-
-Dive a little deeper and start exploring our API reference to get an idea of everything that's possible with the API:
-
-{% content-ref url="reference/api-reference/" %}
-[api-reference](reference/api-reference/)
-{% endcontent-ref %}
-
-## Have you found a bug?
-
-Do not hesitate to contact us! Here is how to do this securely.
-
-{% content-ref url="security/report-an-issue.md" %}
-[report-an-issue.md](security/report-an-issue.md)
-{% endcontent-ref %}
+MIT, see [`LICENSE`](LICENSE).

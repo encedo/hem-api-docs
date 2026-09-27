@@ -6,8 +6,8 @@
 
 | Milestone | Title | State | Commit |
 |---|---|---|---|
-| M0 | Bookkeeping: plan, decisions, drafts | done | (this commit) |
-| M1 | Docusaurus skeleton + CI/CD to GitHub Pages | draft | |
+| M0 | Bookkeeping: plan, decisions, drafts | done | b14abe2 |
+| M1 | Docusaurus skeleton + CI/CD to GitHub Pages | in-progress | |
 | M2 | OpenAPI reference integration | draft | |
 | M3 | Non-API content migration | draft | |
 | M4 | API content reconciliation into the spec | draft | |
