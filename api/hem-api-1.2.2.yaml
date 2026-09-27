@@ -1,8 +1,14 @@
 openapi: 3.0.3
 
-# Generated from firmware source (Firmware/src/api.h, api.c, api_auth.c, api_system.c,
-# api_keymgmt.c, api_crypto.c, api_storage.c, api_logger.c) at firmware release 1.2.2.
-# This file is hand-maintained alongside api.h — update both together.
+# Encedo nGINE REST API — OpenAPI 3.0.3 description for firmware release 1.2.2.
+#
+# This file is the single source of truth for the API reference published at
+# https://encedo.github.io/hem-api-docs/ (rendered with docusaurus-plugin-openapi-docs).
+# One file per API version: api/hem-api-<version>.yaml.
+#
+# Derived from the firmware source (Firmware/src/api.h, api.c, api_auth.c, api_system.c,
+# api_keymgmt.c, api_crypto.c, api_storage.c, api_logger.c) and hand-maintained
+# alongside api.h — update both together.
 
 info:
   title: Encedo nGINE REST API
@@ -64,19 +70,26 @@ servers:
     description: Plain HTTP — key-management and crypto operations refuse it with 418
 
 tags:
-  - name: auth
-    description: Local login, device provisioning, and external (mobile app) ECDH pairing
   - name: system
+    x-displayName: System
     description: Device status, configuration, attestation, remote check-in, firmware/UI upgrade, power control
+  - name: auth
+    x-displayName: Authorization
+    description: Local login, device provisioning, and external (mobile app) ECDH pairing
   - name: keymgmt
+    x-displayName: Key management
     description: Key repository — list, search, fetch, create, import, derive, update, delete
   - name: crypto
+    x-displayName: Cryptography operations
     description: Cryptographic operations with stored keys (HMAC, ECDSA/EdDSA, AES, key wrap, ECDH, ML-KEM, ML-DSA). All HTTPS-only, all require the exact scope `keymgmt:use:<kid>`.
-  - name: storage
-    description: SD-card slot exposure over USB mass storage. Disk index and write permission are carried in the JWT scope (`storage:disk<N>[:rw]`), not the URL. MSC build only.
   - name: logger
+    x-displayName: Audit log
     description: Tamper-evident audit log — HMAC-chained log files signed with the device Ed25519 identity key
+  - name: storage
+    x-displayName: Storage
+    description: SD-card slot exposure over USB mass storage. Disk index and write permission are carried in the JWT scope (`storage:disk<N>[:rw]`), not the URL. MSC build only.
   - name: diag
+    x-displayName: Diagnostics (DIAG builds only)
     description: "DIAG build only: unauthenticated diagnostic/fault-injection endpoints, including destructive ones. Absent from production firmware."
 
 security: []

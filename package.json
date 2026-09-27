@@ -5,11 +5,17 @@
   "description": "Encedo HEM API Developer Manual (Docusaurus site)",
   "scripts": {
     "docusaurus": "docusaurus",
+    "gen-api": "docusaurus gen-api-docs all",
+    "clean-api": "docusaurus clean-api-docs all",
+    "lint:spec": "redocly lint",
+    "prestart": "npm run gen-api",
     "start": "docusaurus start --host 0.0.0.0 --port 3000",
+    "prebuild": "npm run gen-api",
     "build": "docusaurus build",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear",
     "swizzle": "docusaurus swizzle",
+    "pretypecheck": "npm run gen-api",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -18,6 +24,9 @@
     "@docusaurus/preset-classic": "3.10.2",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
+    "docusaurus-plugin-openapi-docs": "^5.2.0",
+    "docusaurus-plugin-sass": "^0.2.7",
+    "docusaurus-theme-openapi-docs": "^5.2.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -26,12 +35,21 @@
     "@docusaurus/module-type-aliases": "3.10.2",
     "@docusaurus/tsconfig": "3.10.2",
     "@docusaurus/types": "3.10.2",
+    "@redocly/cli": "^2.54.3",
     "@types/react": "^19.0.0",
     "typescript": "~6.0.2"
   },
   "browserslist": {
-    "production": [">0.5%", "not dead", "not op_mini all"],
-    "development": ["last 3 chrome version", "last 3 firefox version", "last 5 safari version"]
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
   },
   "engines": {
     "node": ">=20.0"

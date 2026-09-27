@@ -1,0 +1,12 @@
+# Redocly CLI configuration: `npm run lint:spec` validates the OpenAPI source of truth.
+apis:
+  hem@1.2.2:
+    root: api/hem-api-1.2.2.yaml
+extends:
+  - recommended
+rules:
+  # The API description carries no license object (the repository itself is MIT).
+  info-license: off
+  # The unauthenticated /api/diag/* endpoints legitimately answer only 200 (or 404 on
+  # production builds, which is not part of the description).
+  operation-4xx-response: off

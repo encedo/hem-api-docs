@@ -8,7 +8,7 @@
 |---|---|---|---|
 | M0 | Bookkeeping: plan, decisions, drafts | done | b14abe2 |
 | M1 | Docusaurus skeleton + CI/CD to GitHub Pages | in-progress (local check OK; GitHub check deferred) | adc362c |
-| M2 | OpenAPI reference integration | draft | |
+| M2 | OpenAPI reference integration | in-progress | |
 | M3 | Non-API content migration | draft | |
 | M4 | API content reconciliation into the spec | draft | |
 | M5 | Visual style | draft | |
