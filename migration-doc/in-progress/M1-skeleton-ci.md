@@ -42,7 +42,7 @@ Resolved 2026-09-27:
 - `editUrl` points at `main`.
 
 ## Conclusions & hand-over
-Implemented 2026-09-27 (awaiting the user's GitHub configuration, push and Pages check).
+Implemented 2026-09-27. Local preview verified by the user on 2026-09-27 (page reachable at the server IP). **GitHub verification deferred**: the user has no access to the repository settings yet; enabling Pages, relaxing the `github-pages` environment rule, pushing and checking the Actions run remain open. M1 stays in `in-progress` until that check passes; later milestones proceed in the meantime.
 
 - Files: `package.json` + `package-lock.json`, `tsconfig.json`, `.nvmrc`, `.gitignore`, `docusaurus.config.ts`, `sidebars.ts`, `src/css/custom.css`, `docs/index.md`, `docs/preliminary/quick-start.md`, `static/.nojekyll`, `static/img/.gitkeep`, `.github/workflows/deploy.yml`, `.github/workflows/pr-check.yml`, root `README.md` v1. GitBook sources moved to `legacy-gitbook/`.
 - Verified locally: `npm run build` (3 HTML pages: `/`, `/preliminary/quick-start`, `/404`; sitemap; assets under `/hem-api-docs/`), `npm run typecheck`, `npm run serve -- --host 0.0.0.0 --port 3000` → `http://192.168.0.153:3000/hem-api-docs/`.

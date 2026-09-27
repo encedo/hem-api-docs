@@ -16,6 +16,10 @@ Generated one-page-per-operation API reference at `/reference/api/*`, grouped by
 - `package.json` scripts: `gen-api` = `docusaurus gen-api-docs all`, `clean-api` = `docusaurus clean-api-docs all`, `prebuild`/`prestart`/`pretypecheck` = `npm run gen-api`, `lint:spec` = `redocly lint`.
 - Workflows: `npm run lint:spec` step before build (both).
 
+## Inputs from M1
+- Docusaurus 3.10 builds with the Rspack "faster" bundler by default (`@docusaurus/faster` installed). The openapi-docs demo runs with it enabled, but verify the theme's SCSS builds; fallback `future.faster: false`.
+- Preview URL for reviews: `http://192.168.0.153:3000/hem-api-docs/` (`npm run serve -- --host 0.0.0.0 --port 3000 --no-open`).
+
 ## Steps
 1. Rename the spec, edit the header comment, add `x-displayName`, reorder tags. Run `npx @redocly/cli lint` and fix or rule-tune until zero errors.
 2. Install deps; wire plugin, theme, sass plugin, `docItemComponent`, `staticDirectories`.
