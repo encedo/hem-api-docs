@@ -1,0 +1,87 @@
+---
+title: Bootloader upgrade
+description: Stage and flash a bootloader image on a DIAG build.
+---
+
+:::danger DIAG firmware builds only
+Available only in diagnostic firmware builds; production firmware returns `404`. A wrong bootloader
+image can make the device unbootable.
+:::
+
+<Roles user master ext />
+
+:::info
+The `Authorization` header is not required on fresh, not personalized devices.
+:::
+
+## Upload a bootloader image
+
+<Endpoint method="POST" path="/api/system/upgrade/upload_bootldr" operationId="uploadBootloader" />
+
+<Scope main="system:upgrade" />
+
+Writes a raw bootloader image (at most one flash sector, 8 KiB) into the reserved staging sector and
+returns its SHA-1. The `Content-Disposition` filename is required by the transport but ignored.
+
+#### Headers
+
+| Name | Type | Description |
+|---|---|---|
+| Authorization | String | Bearer JWT\_TOKEN |
+| Content-Type<Req /> | String | application/octet-stream |
+| Content-Disposition<Req /> | String | attachment; filename="bootloader.bin" |
+| Expect | String | 100-continue |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Sector written" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Image larger than one flash sector, missing filename, or over 16 MiB" />
+<ResponseCode code="500" title="Flash unlock failed" />
+<ResponseCode code="501" title="Flash erase failed" />
+<ResponseCode code="502" title="Post-erase verification failed" />
+<ResponseCode code="503" title="Buffer allocation failed" />
+<ResponseCode code="504" title="Flash write failed" />
+<ResponseCode code="505" title="Read-back mismatch (plain-text diagnostic body)" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `hash` | String | SHA-1 of the written sector. |
+
+## Install the staged bootloader
+
+<Endpoint method="GET" path="/api/system/upgrade/install_bl" operationId="upgradeInstallBootloader" />
+
+<Scope main="system:upgrade" alt="system:config" />
+
+Erases the bootloader flash sectors and copies the staged image from the reserved sector. Returns the
+SHA-1 of the written sector.
+
+#### Headers
+
+| Name | Type | Description |
+|---|---|---|
+| Authorization | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Bootloader written" />
+<ResponseCode code="400" title="Flash operation failed (body carries the same hash object)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `hash` | String | SHA-1 of the written sector. |

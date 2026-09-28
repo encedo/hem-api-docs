@@ -6,6 +6,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "lint:spec": "redocly lint",
+    "check:api": "node scripts/check-api-docs.mjs",
     "sync:diag": "node scripts/sync-diag-docs.mjs",
     "prestart": "npm run sync:diag",
     "start": "docusaurus start --host 0.0.0.0 --port 3000",
@@ -33,7 +34,8 @@
     "@docusaurus/types": "3.10.2",
     "@redocly/cli": "^2.54.3",
     "@types/react": "^19.0.0",
-    "typescript": "~6.0.2"
+    "typescript": "~6.0.2",
+    "yaml": "^2.9.1"
   },
   "browserslist": {
     "production": [

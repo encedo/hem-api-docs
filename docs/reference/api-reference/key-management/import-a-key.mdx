@@ -47,7 +47,11 @@ Import a public key and save it in the repository of keys.
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
 <ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
 <ResponseCode code="418" title="TLS connection required" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Possible `pubkey` values
@@ -72,6 +76,33 @@ Import a public key and save it in the repository of keys.
 #### Possible `mode` values (NIST ECC keys only)
 
 Check the list [here](create-a-key.mdx#possible-mode-values-nist-ecc-keys-only).
+
+#### Possible `type` values
+
+| Value | Description |
+|---|---|
+| SECP256R1 | NIST P-256 ECC key |
+| SECP384R1 | NIST P-384 ECC key |
+| SECP521R1 | NIST P-521 ECC key |
+| SECP256K1 | SEC2-v2 ECC key |
+| CURVE25519 | CURVE25519 ECC ECDH only key |
+| CURVE448 | CURVE4ECC ECDH only key |
+| ED25519 | ED25519 ECC EdDSA only key |
+| ED448 | ED448 ECC EdDSA only key |
+| MLKEM512 | ML-KEM-512 key |
+| MLKEM768 | ML-KEM-768 key |
+| MLKEM1024 | ML-KEM-1024 key |
+| MLDSA44 | ML-DSA-44 key |
+| MLDSA65 | ML-DSA-65 key |
+| MLDSA87 | ML-DSA-87 key |
+
+#### Possible `mode` values (NIST ECC keys only)
+
+| Value | Description |
+|---|---|
+| ECDH | Limit usage to ECDH only. |
+| ECDH,ExDSA | Allow both ECDH and ECDH mode. |
+| ExDSA | Limit usage to ExDSA only. |
 
 #### Response data for successful operation
 

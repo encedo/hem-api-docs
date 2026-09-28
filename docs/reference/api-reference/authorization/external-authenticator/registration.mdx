@@ -46,8 +46,11 @@ Generate a challenge to link the device with a new external authenticator.
 <ResponseCode code="400" title="Incorrect argument(s)" />
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
-<ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -103,6 +106,10 @@ Upload a registration reply data sent by an external authenticator.
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -157,8 +164,11 @@ Obtain MAC data to authenticate the device on the broker site and retrieve a lis
 <ResponseCode code="400" title="Incorrect argument(s)" />
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
-<ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation

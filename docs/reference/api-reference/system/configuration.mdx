@@ -7,13 +7,14 @@ description: "These operations allow the read and update of the device configura
 
 <Roles user master ext="Allowed only to call Get configuration." />
 
-<Scope main="system:config" alt={["auth:ext:pair", "logger:get"]} />
 
 Allowed only to call _**Get configuration.**_
 
 ## Get configuration
 
 <Endpoint method="GET" path="/api/system/config" operationId="getSystemConfig" />
+
+<Scope main="system:config" alt={["auth:ext:pair", "logger:get"]} />
 
 Read the device configuration data.
 
@@ -60,9 +61,8 @@ Read the device configuration data.
 </ResponseCode>
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
-<ResponseCode code="400" title="Incorrect argument(s)" />
-<ResponseCode code="406" title="Operation failed" />
-<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -98,6 +98,8 @@ Read the device configuration data.
 
 <Endpoint method="POST" path="/api/system/config" operationId="postSystemConfig" />
 
+<Scope main="system:config" />
+
 Change some configuration data, e.g. options, password or update TLS certificate.
 
 #### Headers
@@ -127,12 +129,16 @@ Change some configuration data, e.g. options, password or update TLS certificate
 | `dnsd` | Bool | True to enable DNS server |
 | `storage_disk0size` | Number | Disk0 size in sectors (on Encedo PPA only) |
 | `gen_csr` | Bool | True if requesting CSR generation |
+| `http_option_hsts` | Bool | True enable HSTS HTTP security headers |
+| `http_option_dosprot_mode` | Number | Timeout (disabled if 0) to finish the HTTP request in 0.5sec multipliers |
+
+#### Members of the `tls` object
+
+| Name | Type | Description |
+|---|---|---|
 | `emp` | String | (optional) Ephemeral public key (transport key) |
 | `key` | String | (optional) Encrypted private key |
 | `crt` | String | Base64 encoded DER x509 certificate |
-| `tls` consists of: | String |  |
-| `http_option_hsts` | Bool | True enable HSTS HTTP security headers |
-| `http_option_dosprot_mode` | Number | Timeout (disabled if 0) to finish the HTTP request in 0.5sec multipliers |
 
 #### Response status code
 
@@ -154,6 +160,10 @@ Change some configuration data, e.g. options, password or update TLS certificate
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -214,6 +224,8 @@ Obtain device attestation data, which serves as proof of genuineness.
 </ResponseCode>
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -259,4 +271,8 @@ On factory Secure Enclave provisioning (on Encedo PPA only).
 <ResponseCode code="400" title="Incorrect or malformated argument(s)" />
 <ResponseCode code="403" title="Device personalized" />
 <ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>

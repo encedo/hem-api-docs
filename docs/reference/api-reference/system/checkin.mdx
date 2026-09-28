@@ -27,6 +27,8 @@ Get a device check-in challenge data.
 ```
 
 </ResponseCode>
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -69,6 +71,10 @@ Process server response for the device `check` challenge.
 </ResponseCode>
 <ResponseCode code="400" title="Incorrect argument(s)" />
 <ResponseCode code="401" title="Provided data validation failed" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation

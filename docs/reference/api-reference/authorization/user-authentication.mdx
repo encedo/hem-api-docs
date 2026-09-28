@@ -37,6 +37,8 @@ Get a challenge data to perform user authentication based on it.
 </ResponseCode>
 <ResponseCode code="403" title="Clock RTC not set" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -85,6 +87,10 @@ Post-authentication data is signed based on the user's passphrase.
 <ResponseCode code="401" title="User not authenticated" />
 <ResponseCode code="403" title="Clock RTC not set" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation

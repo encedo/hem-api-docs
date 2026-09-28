@@ -38,7 +38,14 @@ npm run typecheck      # type-check the TypeScript config files
 
 The OpenAPI file in `api/` is the single source of truth for the API. The interactive **API tester**
 page (`/api-tester`) renders it directly; the hand-written reference pages are kept consistent with it
-(see the maintenance instructions, added later in the migration).
+by `npm run check:api` (see [`AGENTS.md`](AGENTS.md) for the page template and the update procedures).
+
+## Maintaining the documentation
+
+- Editing pages: `docs/**`. API reference pages follow the template in [`AGENTS.md`](AGENTS.md).
+- The API changed or a new firmware version was released: follow Procedure A or B in [`AGENTS.md`](AGENTS.md).
+- Two variants are built from `docs/`: the default reference (`/`) and "Diag" (`/diag`, adds the
+  DIAG-build-only endpoints under `docs/reference/api-reference/diagnostics/`).
 
 ### Preview on a headless server
 

@@ -45,8 +45,8 @@ Retrieve the latest self-test status and rerun a new full test (only if one is n
 
 </ResponseCode>
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
-<ResponseCode code="403" title="Operation failed" />
-<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation

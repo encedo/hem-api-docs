@@ -9,7 +9,6 @@ Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA those endpoi
 
 <Roles user master ext />
 
-<Scope main="system:upgrade" alt="system:config" />
 
 :::info
 `The Authorization` header is not required on fresh, not personalized devices.
@@ -24,6 +23,8 @@ TLS connection is not required. It is a last resort way to upload fixes. Firmwar
 ### Upload a new firmware
 
 <Endpoint method="POST" path="/api/system/upgrade/upload_fw" operationId="uploadFirmware" />
+
+<Scope main="system:upgrade" />
 
 Upload a new firmware image (firmware.bin) file.
 
@@ -43,6 +44,10 @@ Upload a new firmware image (firmware.bin) file.
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Log entries
@@ -56,6 +61,8 @@ Upload a new firmware image (firmware.bin) file.
 ### Check firmware
 
 <Endpoint method="GET" path="/api/system/upgrade/check_fw" operationId="upgradeCheckFw" />
+
+<Scope main="system:upgrade" alt="system:config" />
 
 Verify that the newly uploaded firmware file is valid.
 
@@ -73,7 +80,9 @@ Verify that the newly uploaded firmware file is valid.
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="201" title="Process of validation started" />
+<ResponseCode code="404" title="Not found" />
 <ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
 </ResponseCodes>
 
 #### Log entries
@@ -88,6 +97,8 @@ Verify that the newly uploaded firmware file is valid.
 
 <Endpoint method="GET" path="/api/system/upgrade/install_fw" operationId="upgradeInstallFw" />
 
+<Scope main="system:upgrade" alt="system:config" />
+
 Install uploaded and validated firmware (checked) in bootloader mode (the device will reboot on 200).
 
 #### Headers
@@ -96,23 +107,16 @@ Install uploaded and validated firmware (checked) in bootloader mode (the device
 | ------------- | ------ | ----------------- |
 | Authorization | String | Bearer JWT\_TOKEN |
 
-<Tabs>
-<TabItem value="200-operation-successful" label="200: Operation successful">
+#### Response status code
 
-</TabItem>
-<TabItem value="401-missing-or-invalid-jwt_token" label="401: Missing or invalid JWT_TOKEN">
-
-</TabItem>
-<TabItem value="403-incorrect-access-scope" label="403: Incorrect access scope">
-
-</TabItem>
-<TabItem value="409-incorrect-internal-state" label="409: Incorrect internal state">
-
-</TabItem>
-<TabItem value="406-operation-failed" label="406: Operation failed">
-
-</TabItem>
-</Tabs>
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+</ResponseCodes>
 
 #### Log entries
 

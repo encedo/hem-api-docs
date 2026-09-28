@@ -1,7 +1,12 @@
 [
   {
-    "type": "doc",
-    "id": "reference/api-reference/diagnostics/index",
-    "label": "Diagnostics (DIAG builds only)"
+    "type": "category",
+    "label": "Diagnostics (DIAG builds only)",
+    "link": {"type": "doc", "id": "reference/api-reference/diagnostics/index"},
+    "items": [
+      "reference/api-reference/diagnostics/fault-injection",
+      "reference/api-reference/diagnostics/memory-and-repository",
+      "reference/api-reference/diagnostics/bootloader-upgrade"
+    ]
   }
 ]

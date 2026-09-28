@@ -1,0 +1,115 @@
+---
+title: Fault injection
+description: Liveness probe, entropy dump, self-test control, fault injection and the factory wipe of a DIAG build.
+---
+
+:::danger DIAG firmware builds only
+Available only in diagnostic firmware builds; production firmware returns `404`. All endpoints on this
+page are unauthenticated.
+:::
+
+## Liveness probe
+
+<Endpoint method="GET" path="/api/diag/test" operationId="diagTest" />
+
+Confirms that the diagnostic API is reachable.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Alive (empty body)" />
+</ResponseCodes>
+
+## Dump TRNG output
+
+<Endpoint method="GET" path="/api/diag/test_trng" operationId="diagTestTrng" />
+
+Returns 8192 raw bytes from the true random number generator, for entropy analysis.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Random data returned" />
+<ResponseCode code="400" title="Entropy source under-delivered" />
+<ResponseCode code="406" title="Serialization failure" />
+<ResponseCode code="500" title="Internal allocation or serialization failure" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `rnd` | String | 8192 random bytes, base64 encoded. |
+
+## Inject a temperature-sensor fault
+
+<Endpoint method="GET" path="/api/diag/break_temp" operationId="diagBreakTemp" />
+
+Simulates a temperature-sensor failure so that the self-test enters the fail state.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Fault injected (empty body)" />
+</ResponseCodes>
+
+## Inject a TRNG fault
+
+<Endpoint method="GET" path="/api/diag/break_trng" operationId="diagBreakTrng" />
+
+Returns the diagnostic state of the random number generator as it was before the call, then arms the
+fault.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Previous state returned, fault armed" />
+<ResponseCode code="500" title="Internal allocation or serialization failure" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `mode` | Number | TRNG test mode before the fault was armed. |
+| `last_ts` | Number | Timestamp of the last entropy test. |
+| `last_val` | Number | Result of the last entropy test. |
+
+## Inject a TLS-layer fault
+
+<Endpoint method="GET" path="/api/diag/break_tls" operationId="diagBreakTls" />
+
+Arms a fault in the TLS layer that triggers after five further TLS operations.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Fault armed (empty body)" />
+</ResponseCodes>
+
+## Disable periodic self-tests
+
+<Endpoint method="GET" path="/api/diag/disable_selftest" operationId="diagDisableSelftest" />
+
+Stops the periodic self-test scheduler until the next reboot.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Self-tests disabled (empty body)" />
+</ResponseCodes>
+
+## Factory wipe
+
+:::danger Destructive and irreversible
+There is no confirmation step. The device answers `200`, closes the connection, erases the
+configuration and the key store, reformats the SD card and reboots.
+:::
+
+<Endpoint method="GET" path="/api/diag/wipe_config" operationId="diagWipeConfig" />
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Accepted, device wipes and reboots (connection closed)" />
+</ResponseCodes>

@@ -40,6 +40,8 @@ Get initial data (challenge) as the first step in the personalisation process.
 <ResponseCode code="403" title="Clock RTC not set" />
 <ResponseCode code="409" title="Incorrect internal state" />
 <ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -91,6 +93,10 @@ Upload a well-formatted initial configuration signed by the user's passphrase.
 <ResponseCode code="409" title="Incorrect internal state" />
 <ResponseCode code="400" title="Incorrect argument(s)" />
 <ResponseCode code="401" title="Initialization structure validation failed" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation

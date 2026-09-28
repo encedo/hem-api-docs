@@ -1,0 +1,37 @@
+[
+  {
+    "operationId": "postAuthExtInit",
+    "match": "page denies Master",
+    "reason": "firmware allows role U only (api_auth.c:874-881); spec x-required-scope lacks 'role M denied' \u2014 upstream spec fix"
+  },
+  {
+    "operationId": "postAuthExtValidate",
+    "match": "page denies Master",
+    "reason": "firmware allows role U only (api_auth.c:1018-1025); spec x-required-scope lacks 'role M denied' \u2014 upstream spec fix"
+  },
+  {
+    "operationId": "postAuthExtMac",
+    "match": "page denies Master",
+    "reason": "firmware allows role U only (api_auth.c:1208-1215); spec x-required-scope lacks 'role M denied' \u2014 upstream spec fix"
+  },
+  {
+    "operationId": "storageUnlock",
+    "match": "page denies Master",
+    "reason": "firmware intends to deny role M (api_storage.c:44-46, check reads an uninitialised `sub`); spec lacks 'role M denied' \u2014 upstream spec + firmware fix"
+  },
+  {
+    "operationId": "storageLock",
+    "match": "page denies Master",
+    "reason": "firmware intends to deny role M (api_storage.c:133-134, same uninitialised `sub` bug); spec lacks 'role M denied' \u2014 upstream spec + firmware fix"
+  },
+  {
+    "operationId": "storageUnlockRw",
+    "match": "page denies Master",
+    "reason": "same handler as /api/storage/unlock (api_get_storage_unlock)"
+  },
+  {
+    "operationId": "storageUnlockRo",
+    "match": "page denies Master",
+    "reason": "same handler as /api/storage/unlock (api_get_storage_unlock)"
+  }
+]

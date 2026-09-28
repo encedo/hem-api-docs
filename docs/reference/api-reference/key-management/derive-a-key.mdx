@@ -5,7 +5,7 @@ description: "This key management operation allows to derive a new key and save 
 
 <Roles user master={false} ext />
 
-<Scope main="keymgmt:ecdh" alt="keymgmt:gen" />
+<Scope main="keymgmt:derive" alt="keymgmt:gen" />
 
 ## Derive a new key
 
@@ -49,7 +49,11 @@ Derive (create) a new key using ECDH with a source key and save it.
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
 <ResponseCode code="418" title="TLS connection required" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 :::info
@@ -59,6 +63,36 @@ The key type pointed to `ext_kid` or represented by `pubkey` MUST be the same as
 :::warning
 To generate ECC keys (NISP & SECP only), the generated seed needs to be validated to ensure it is in the correct range. As a result, this endpoint can fail without being an error.
 :::
+
+#### Possible `type` values
+
+| Value | Description |
+|---|---|
+| SECP256R1 | NIST P-256 ECC key |
+| SECP384R1 | NIST P-384 ECC key |
+| SECP521R1 | NIST P-521 ECC key |
+| SECP256K1 | SEC2-v2 ECC key |
+| CURVE25519 | CURVE25519 ECC ECDH only key |
+| CURVE448 | CURVE4ECC ECDH only key |
+| ED25519 | ED25519 ECC EdDSA only key |
+| ED448 | ED448 ECC EdDSA only key |
+| SHA2-256 | SHA2-256 HMAC symmetric key |
+| SHA2-384 | SHA2-384 HMAC symmetric key |
+| SHA2-512 | SHA2-512 HMAC symmetric key |
+| SHA3-256 | SHA3-256 HMAC symmetric key |
+| SHA3-384 | SHA3-384 HMAC symmetric key |
+| SHA3-512 | SHA3-512 HMAC symmetric key |
+| AES128 | AES 128 bits symmetric key |
+| AES192 | AES 192 bits symmetric key |
+| AES256 | AES 256 bits symmetric key |
+
+#### Possible `mode` values (NIST ECC keys only)
+
+| Value | Description |
+|---|---|
+| ECDH | Limit usage to ECDH only. |
+| ECDH,ExDSA | Allow both ECDH and ECDH mode. |
+| ExDSA | Limit usage to ExDSA only. |
 
 #### Response data for successful operation
 

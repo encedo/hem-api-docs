@@ -55,3 +55,13 @@ Open items carried over: canonical home of the spec (M4/M6); legacy-only fields 
 | Welcome cover | Kept as a banner (`static/img/welcome-cover.jpg`) | User decision |
 | Manual version block | Removed from Welcome and the API Reference index | User decision |
 | Visual notes for M5 | Logo top-left, light mode default, no icons on page-list cards | User review of M3 |
+
+## 2026-09-28 — M4 reconciliation (evidence from the firmware source, tag 1.2.2)
+
+| Topic | Decision | Reason |
+|---|---|---|
+| Page-only response codes (406 ext/init, ext/mac, mldsa/verify; 418 hmac/hash, keymgmt/delete; 400 keymgmt/list; 400/406/409 GET config; 403/409 selftest) | Removed from the pages | The handlers never return them (see `migration-doc/upstream-spec-notes.md`) |
+| Page-only field `exp` on `POST /api/auth/ext/request` | Removed | The handler ignores it; token lifetime is fixed by the device |
+| Master denied on ext-auth and storage endpoints (pages) vs silent spec | Pages kept; accepted in `scripts/check-api-docs.known-gaps.json` | Firmware denies role M (ext-auth: U only; storage: intended, buggy check) — spec fix upstream |
+| Enum tables on derive/import | Added from the spec instead of linking to create-a-key | The allowed `type` sets differ per operation |
+| `emp`/`key`/`crt` on configuration POST | Moved under "Members of the `tls` object" | They are members of `tls`, not top-level fields |

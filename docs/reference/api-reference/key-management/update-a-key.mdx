@@ -25,7 +25,7 @@ Update a key `label` and `descr` fields.
 | Name                                    | Type   | Description                           |
 | --------------------------------------- | ------ | ------------------------------------- |
 | `kid`<Req /> | String | Key ID, 32-character hex string       |
-| `label`                                 | String | Label of a key                        |
+| `label`<Req /> | String | Label of a key                        |
 | `descr`                                 | String | Base64 encoded additional description |
 
 #### Response status code
@@ -37,6 +37,9 @@ Update a key `label` and `descr` fields.
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
 <ResponseCode code="418" title="TLS connection required" />
 </ResponseCodes>
 

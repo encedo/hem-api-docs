@@ -37,6 +37,7 @@ Disk number and mode (read-only or read/write) are taken from the access `scope`
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
 </ResponseCodes>
 
 #### Log entries
@@ -65,6 +66,70 @@ Disk number is taken from the access `scope` of the JWT\_TOKEN.
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Unlock a disk read/write
+
+<Endpoint method="GET" path="/api/storage/unlock/rw" operationId="storageUnlockRw" />
+
+<Scope main="storage:disk<N>:rw" />
+
+Exposes the disk read/write regardless of the mode encoded in the access `scope`; the scope must still
+carry the `:rw` suffix, otherwise the call fails with `406`.
+
+#### Headers
+
+| Name | Type | Description |
+|---|---|---|
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Scope lacks :rw, or invalid slot" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Unlock a disk read-only
+
+<Endpoint method="GET" path="/api/storage/unlock/ro" operationId="storageUnlockRo" />
+
+<Scope main="storage:disk<N>" />
+
+Exposes the disk read-only regardless of the mode encoded in the access `scope`.
+
+#### Headers
+
+| Name | Type | Description |
+|---|---|---|
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Invalid slot in scope" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
 </ResponseCodes>
 
 #### Log entries

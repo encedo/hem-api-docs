@@ -9,9 +9,12 @@ description: "This key management operation allows the listing of the keys from 
 
 ## List the keys
 
+<Endpoint method="GET" path="/api/keymgmt/list" operationId="listKeys" />
+<Endpoint method="GET" path="/api/keymgmt/list/{offset}" operationId="listKeysOffset" />
 <Endpoint method="GET" path="/api/keymgmt/list/{offset}/{count}" operationId="listKeysPage" />
 
-List the keys stored in the repository with pagination.
+List the keys stored in the repository, with pagination: without arguments the first page (up to 15
+records) is returned; `offset` skips that many valid records; `count` sets the page size.
 
 #### Headers
 
@@ -19,12 +22,12 @@ List the keys stored in the repository with pagination.
 | ----------------------------------------------- | ------ | ----------------- |
 | Authorization<Req /> | String | Bearer JWT\_TOKEN |
 
-#### Request Body
+#### Path Parameters
 
-| Name     | Type   | Description                                                                                                     |
-| -------- | ------ | --------------------------------------------------------------------------------------------------------------- |
-| `offset` | Number | Skip `offset` entries.                                                                                          |
-| `limit`  | Number | (required`offset`to be set)<br />Limit the number of return entries, default is 15 if skipped.  |
+| Name | Type | Description |
+|---|---|---|
+| `offset` | Number | Number of valid records to skip (decimal digits only). |
+| `count` | Number | Number of records to return (requires `offset`); default is 15. |
 
 #### Response status code
 
@@ -74,11 +77,11 @@ List the keys stored in the repository with pagination.
 ```
 
 </ResponseCode>
-<ResponseCode code="400" title="Incorrect argument(s)" />
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
 <ResponseCode code="418" title="TLS connection required" />
 </ResponseCodes>
 

@@ -9,7 +9,6 @@ Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA those endpoi
 
 <Roles user master ext />
 
-<Scope main="system:upgrade" alt="system:config" />
 
 :::info
 `The Authorization` header is not required on fresh, not personalized devices.
@@ -24,6 +23,8 @@ TLS connection is not required. It is a last resort way to upload fixes. Firmwar
 ### Upload a new file
 
 <Endpoint method="POST" path="/api/system/upgrade/upload_ui" operationId="uploadDashboard" />
+
+<Scope main="system:upgrade" />
 
 Upload a new app image (webroot.tar) file.
 
@@ -43,6 +44,10 @@ Upload a new app image (webroot.tar) file.
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Log entries
@@ -56,6 +61,8 @@ Upload a new app image (webroot.tar) file.
 ### Check a file
 
 <Endpoint method="GET" path="/api/system/upgrade/check_ui" operationId="upgradeCheckUi" />
+
+<Scope main="system:upgrade" alt="system:config" />
 
 Check the signature and integrity of the newly uploaded app image.
 
@@ -74,6 +81,8 @@ Check the signature and integrity of the newly uploaded app image.
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
 </ResponseCodes>
 
 #### Log entries
@@ -85,6 +94,8 @@ Check the signature and integrity of the newly uploaded app image.
 ## Install the new management app
 
 <Endpoint method="GET" path="/api/system/upgrade/install_ui" operationId="upgradeInstallUi" />
+
+<Scope main="system:upgrade" alt="system:config" />
 
 A new version of Encedo Manager will be installed on Encedo PPA.
 
@@ -102,6 +113,7 @@ A new version of Encedo Manager will be installed on Encedo PPA.
 <ResponseCode code="403" title="Incorrect access scope" />
 <ResponseCode code="409" title="Incorrect internal state" />
 <ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
 </ResponseCodes>
 
 #### Log entries

@@ -27,7 +27,8 @@ Get an authentication request data to challenge the external authenticator.
 | ----------------------------------------- | ------ | ------------------------------- |
 | `epk`<Req />   | String | Broker ephemeral public key     |
 | `scope`<Req /> | String | Requested access scope          |
-| `exp`<Req />   | Number | Requested lifetime of the token |
+| `ctx` | String | Optional context — copied into the request JWT. |
+| `note` | String | Optional human-readable note — copied into the request JWT. |
 
 #### Response status code
 
@@ -45,6 +46,10 @@ Get an authentication request data to challenge the external authenticator.
 <ResponseCode code="400" title="Incorrect argument(s)" />
 <ResponseCode code="403" title="Clock RTC not set" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -91,6 +96,10 @@ Post authentication data signed by an external authenticator.
 <ResponseCode code="403" title="Clock RTC not set" />
 <ResponseCode code="406" title="Issuer not found" />
 <ResponseCode code="409" title="Conflict" />
+<ResponseCode code="411" title="Protocol error - Content-Length required" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="413" title="Protocol error - request body too big" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation

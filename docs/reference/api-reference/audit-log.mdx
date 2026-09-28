@@ -36,6 +36,8 @@ Return a key used to sign the log file header as proof of the source's digital a
 <ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
 <ResponseCode code="403" title="Incorrect access 'scope'" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -60,6 +62,7 @@ Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA these two en
 
 ## Get a list of logs
 
+<Endpoint method="GET" path="/api/logger/list" operationId="listLogFiles" />
 <Endpoint method="GET" path="/api/logger/list/{offset}" operationId="listLogFilesOffset" />
 
 Get a list of available log files.
@@ -94,6 +97,7 @@ Get a list of available log files.
 <ResponseCode code="404" title="Missing log entries" />
 <ResponseCode code="406" title="Operation failed" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
 </ResponseCodes>
 
 #### Response data for successful operation
@@ -131,7 +135,7 @@ Get a log file for a given ID.
 
 | Name                                   | Type   | Description             |
 | -------------------------------------- | ------ | ----------------------- |
-| `id`<Req /> | String | File ID e.g. "62310b2b" |
+| `file`<Req /> | String | File ID e.g. "62310b2b" |
 
 #### Headers
 
@@ -162,6 +166,8 @@ Get a log file for a given ID.
 <ResponseCode code="404" title="File not found" />
 <ResponseCode code="406" title="Operation failed (e.g. file busy)" />
 <ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="412" title="Protocol error - CORS validation failed" />
+<ResponseCode code="500" title="Internal server error" />
 </ResponseCodes>
 
 #### Log entries

@@ -6,7 +6,10 @@ description: Unauthenticated diagnostic and fault-injection endpoints available 
 
 :::danger DIAG firmware builds only
 The endpoints in this section exist only in diagnostic firmware builds (`DIAG_MODE_ON`). Production
-firmware answers `404` for all of them. They are unauthenticated and some are destructive.
+firmware answers `404` for all of them. They are **unauthenticated** (no `Authorization` header, no
+access scope) and several of them are **destructive**. Never expose a DIAG build outside a test bench.
 :::
 
-The individual endpoint pages are added in a later migration step (M4).
+The diagnostic endpoints are grouped on three pages:
+
+<DocCardList />

@@ -26,6 +26,9 @@ jobs:
       - run: npm ci
       - run: npm run lint:spec
       - run: npm run build
+      - name: API docs check (informational)
+        run: node scripts/check-api-docs.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
+        continue-on-error: true
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

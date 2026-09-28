@@ -1,0 +1,68 @@
+---
+title: Memory and repository
+description: Raw memory dump and key-repository corruption for integrity testing on a DIAG build.
+---
+
+:::danger DIAG firmware builds only
+Available only in diagnostic firmware builds; production firmware returns `404`. Both endpoints are
+unauthenticated; the memory dump performs no address validation.
+:::
+
+## Dump memory
+
+<Endpoint method="GET" path="/api/diag/memdump/{address}/{length}" operationId="diagMemdump" />
+
+Returns the contents of arbitrary memory. No address validation is performed.
+
+#### Path Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| `address`<Req /> | Number | Absolute memory address (decimal), at least 1. |
+| `length`<Req /> | Number | Number of bytes to dump, 1 to 4095. |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Memory contents returned" />
+<ResponseCode code="400" title="Malformed address or length" />
+<ResponseCode code="500" title="Internal allocation or serialization failure" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `address` | Number | Start address that was read. |
+| `length` | Number | Number of bytes returned. |
+| `dump` | String | Memory contents, base64 encoded. |
+
+## Corrupt a key-repository record
+
+:::danger Destructive
+Writes four zero bytes into the key-store flash to exercise the integrity detection. The affected key
+record is lost.
+:::
+
+<Endpoint method="GET" path="/api/diag/corrupt_repo/{address}" operationId="diagCorruptRepo" />
+
+#### Path Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| `address`<Req /> | Number | Absolute flash address (decimal), 32-byte aligned, inside the key-store region. |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Write attempted (status 0 = flash write failed)" />
+<ResponseCode code="400" title="Non-decimal, out-of-range or misaligned address" />
+<ResponseCode code="500" title="Internal allocation or serialization failure" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `address` | Number | Address that was written. |
+| `status` | Number | `1` if the flash write succeeded, `0` if it failed. |
