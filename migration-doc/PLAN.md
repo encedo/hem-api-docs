@@ -8,7 +8,7 @@
 |---|---|---|---|
 | M0 | Bookkeeping: plan, decisions, drafts | done | b14abe2 |
 | M1 | Docusaurus skeleton + CI/CD to GitHub Pages | in-progress (local check OK; GitHub check deferred) | adc362c |
-| M2 | API tester (Scalar) + remove generated reference (revised) | in-progress | first version ad075c9 (superseded) |
+| M2 | API tester (Scalar) + remove generated reference (revised) | done | d775f0c (first version ad075c9 superseded) |
 | M3 | Content migration (44 pages) + two instances + dropdown | draft | |
 | M4 | Update pages from the spec + new pages + checker + agent instructions | draft | |
 | M5 | Visual style | draft | |

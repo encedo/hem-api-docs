@@ -1,6 +1,6 @@
 # M2 — API tester (Scalar) + remove generated reference (revised)
 
-State: in-progress (revision 2 accepted with the plan on 2026-09-27)
+State: done (implemented 2026-09-27, accepted by the user 2026-09-28)
 
 ## History
 The first M2 (commit `ad075c9`) generated the API reference with `docusaurus-plugin-openapi-docs`. The user rejected the look; the plugin, theme and sass plugin are removed by this revised milestone. Kept from the first M2: spec renamed to `api/hem-api-1.2.2.yaml` with a new header comment, `x-displayName` tag labels in GitBook order, `redocly.yaml` + `npm run lint:spec` (also in both workflows), `staticDirectories: ['static', 'api']` so the spec is downloadable from the site.
@@ -33,7 +33,7 @@ A separate, interactive API tester page rendering the full OpenAPI file with Sca
 - None blocking. Scalar option names (`proxyUrl`, `hideModels`, dark-mode sync) are verified against the installed version during implementation.
 
 ## Conclusions & hand-over
-Implemented 2026-09-27 (revision 2); awaiting the user's review of the tester on the preview.
+Implemented 2026-09-27 (revision 2); tester reviewed and accepted by the user on 2026-09-28 (commit d775f0c).
 
 - Removed `docusaurus-plugin-openapi-docs`, `docusaurus-theme-openapi-docs`, `docusaurus-plugin-sass` and all their wiring (config, `themes`, `languageTabs`, `docItemComponent`, `gen-api`/`clean-api`/`pre*` scripts, `.gitignore` entry, generated folder, generated-sidebar import). `sidebars.ts` is static again with an "API tester" link under the Reference header.
 - Added `@scalar/docusaurus@0.8.44` (pinned). Facts verified in `node_modules/@scalar/docusaurus/dist/`: options are `label`, `route`, `cdn`, `showNavLink`, `configuration` (no `id`, single instance); the route is `normalizeUrl([baseUrl, route])`; `showNavLink: true` would push a navbar item, so we declare our own; the renderer is a **runtime CDN script** (`https://cdn.jsdelivr.net/npm/@scalar/api-reference`, unpinned by default) → pinned via `cdn: '…@scalar/api-reference@1.72.1'`; the configuration is serialized into the route module and executed client-side (`window.Scalar.createApiReference`), so the page is empty in static HTML and needs JavaScript + CDN access. Scalar has its own dark-mode toggle (no Docusaurus colour-mode sync) → left visible.
