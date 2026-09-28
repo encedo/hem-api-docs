@@ -11,7 +11,7 @@
 | M2 | API tester (Scalar) + remove generated reference (revised) | done | d775f0c (first version ad075c9 superseded) |
 | M3 | Content migration (44 pages) + two instances + dropdown | done | c0c061d |
 | M4 | Update pages from the spec + new pages + checker + agent instructions | done | cedd4a8 |
-| M5 | Visual style | in-progress (awaiting review) | |
+| M5 | Visual style | done | b22d5b6 |
 | M6 | Cleanup + maintainer docs | draft | |
 | M7 | Stabilise + merge to main | draft | |
 

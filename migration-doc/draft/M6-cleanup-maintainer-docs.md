@@ -19,9 +19,13 @@ Remove all GitBook leftovers; finish the root README as the human setup manual (
 - Automated: the commands above.
 - User: README read-through; full click-through (both variants, tester); redirect decision.
 
+## Inputs from M4/M5
+- The firmware repository is canonical for the spec: the README describes copying `encedo_firmware/docs/openapi.yaml` into `api/hem-api-<version>.yaml`; `migration-doc/upstream-spec-notes.md` must be handed over before `migration-doc/` is deleted (M7).
+- `AGENTS.md` already holds Procedures A/B and the validation checklist; the README only points to it.
+- Fonts are self-hosted (`src/fonts.ts`), search is local (`@easyops-cn/docusaurus-search-local`), the API tester renderer is loaded from a pinned CDN URL (`cdn` in `docusaurus.config.ts`).
+
 ## Open questions
-- Enable client redirects now or defer (recommended: defer)?
-- Replace `encedo_firmware/docs/openapi.yaml` by a pointer to this repo?
+- Enable client redirects from the old GitBook paths now, or defer until a custom domain (recommended: defer; the list is generated and kept in the README)?
 
 ## Conclusions & hand-over
 _(filled when done)_

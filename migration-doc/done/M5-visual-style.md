@@ -1,6 +1,6 @@
 # M5 — Visual style (revised)
 
-State: in-progress (accepted 2026-09-28)
+State: done (implemented and accepted 2026-09-28, commit b22d5b6)
 
 ## Goal
 Encedo branding and a GitBook-like feel across both variants and the tester: logo/favicon, `#9B34DB` palette (light + lighter dark ramp), self-hosted Inter and IBM Plex Mono, styled API components, sidebar section headers, cards, local search, footer.
@@ -28,7 +28,7 @@ Encedo branding and a GitBook-like feel across both variants and the tester: log
 - Footer wording: resolved 2026-09-28 → "Copyright © <year> Encedo Limited." plus a links column (encedo.com, Report a security issue, API examples on GitHub); no framework credit.
 
 ## Conclusions & hand-over
-Implemented 2026-09-28; awaiting the user's visual review on the preview (`http://192.168.0.153:3000/hem-api-docs/`, light and dark, `/diag`, `/api-tester`).
+Implemented 2026-09-28; visually reviewed and accepted by the user on 2026-09-28 (`http://192.168.0.153:3000/hem-api-docs/`, light and dark, `/diag`, `/api-tester`).
 
 - Branding: `static/img/encedo-logo.png` (588×588 PNG from the GitBook CDN, works on light and dark) in the navbar next to "Encedo HEM API"; `static/img/favicon.png` (64×64 derived with sharp-cli). Light mode by default, system preference ignored, toggle kept.
 - Palette `#9B34DB` with a lighter dark-mode ramp and a slightly purple dark background; Inter + IBM Plex Mono self-hosted via `@fontsource` (client module `src/fonts.ts`; 33 font files in `build/assets/fonts`, no Google Fonts request).
