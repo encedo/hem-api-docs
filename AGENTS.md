@@ -164,7 +164,12 @@ grep -rn '{%\|&#x20;\|<mark' docs/          # must print nothing (legacy GitBook
 
 CI (`.github/workflows/*.yml`) runs the same commands; the checker's report is informational (it never fails the build) and appears in the job summary.
 
-## 7. Known limitations
+## 7. Trying a procedure without keeping it
+
+Commit your work first. A dry run that ends with `git checkout -- <file>` restores the last
+committed version and silently discards uncommitted edits to that file.
+
+## 8. Known limitations
 
 - The checker compares structure (operations, parameters, fields, required flags, enums, response codes, scope tokens, master role). It cannot judge prose, examples or log-entry tables.
 - `docs-diag/` is copied when `start`/`build` run; during `npm start`, re-run `npm run sync:diag` (or `node scripts/sync-diag-docs.mjs --watch`) after editing `docs/` to refresh the Diag variant.

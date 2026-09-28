@@ -4,23 +4,28 @@ Source of the developer documentation for the Encedo HEM REST API, built with
 [Docusaurus](https://docusaurus.io/) and published with GitHub Pages.
 
 - Live site: <https://encedo.github.io/hem-api-docs/>
-- API specification (single source of truth for the API reference): [`api/`](api/)
+- API tester (interactive OpenAPI rendering): <https://encedo.github.io/hem-api-docs/api-tester>
+- Maintenance procedures for the API reference (also for AI agents): [`AGENTS.md`](AGENTS.md)
 
-> **Migration in progress.** This repository is being migrated from GitBook to Docusaurus.
-> Plan, status and milestone notes live in [`migration-doc/`](migration-doc/) (temporary folder).
-> The original GitBook sources are kept in `legacy-gitbook/` until the migration is complete.
+> **Migration note.** This repository was migrated from GitBook in September 2026. The temporary
+> folder `migration-doc/` documents that migration and is removed once it is complete.
 
 ## Repository layout
 
 | Path | Purpose |
 |---|---|
-| `docs/` | Documentation pages (Markdown/MDX). `docs/index.md` is the landing page. |
-| `api/` | OpenAPI specification files, one per API version (`hem-api-<version>.yaml`). Single source of truth for the API reference. |
+| `docs/` | Documentation pages (Markdown/MDX). `docs/index.md` is the landing page; `docs/reference/api-reference/**` is the hand-written API reference, one `<Endpoint>` block per operation. |
+| `docs/reference/api-reference/diagnostics/` | Endpoints that exist only in DIAG firmware builds. Published only in the "Diag" variant of the site (`/diag`). |
+| `api/hem-api-<version>.yaml` | OpenAPI 3.0 description of the API, one file per API/firmware version. **Source of truth for API facts.** A copy of `docs/openapi.yaml` from the `encedo_firmware` repository (which is canonical) at the release tag. |
+| `scripts/check-api-docs.mjs` | Compares the API pages with the OpenAPI file (`npm run check:api`). `scripts/check-api-docs.known-gaps.json` lists reviewed, accepted differences. |
+| `scripts/sync-diag-docs.mjs` | Copies `docs/` to `docs-diag/` (gitignored) for the Diag variant before `start`/`build`. |
+| `src/components/api/`, `src/components/ContentRef.tsx` | Components used by the pages (endpoint line, method badge, roles, scope, response tabs, link cards). Registered globally in `src/theme/MDXComponents.tsx`. |
+| `src/theme/` | Small theme overrides: page subtitle (`DocItem/Content`), card headings without icons (`DocCard/Heading`). |
+| `src/css/custom.css`, `src/fonts.ts` | Styling (Encedo palette) and self-hosted fonts (Inter, IBM Plex Mono). |
+| `static/img/` | Logo, favicon, product photos, cover image. |
+| `docusaurus.config.ts` | Site configuration: URL and base path, `apiVersion`, the two docs instances, the API tester, search, redirects. |
+| `sidebars.ts`, `sidebars-diag-items.json`, `sidebars-diag.ts` | Sidebar of the default variant; the Diagnostics entries appended for the Diag variant. |
 | `redocly.yaml` | Lint configuration for the OpenAPI files (`npm run lint:spec`). |
-| `src/css/custom.css` | Site styling. |
-| `static/` | Static assets (images, favicon). |
-| `docusaurus.config.ts` | Site configuration (title, URL, navbar, footer, plugins). |
-| `sidebars.ts` | Sidebar structure. |
 | `.github/workflows/` | CI: `deploy.yml` builds and deploys to GitHub Pages, `pr-check.yml` builds pull requests. |
 
 ## Prerequisites
@@ -31,21 +36,11 @@ Source of the developer documentation for the Encedo HEM REST API, built with
 
 ```bash
 npm ci                 # install dependencies (uses package-lock.json)
-npm run lint:spec      # validate the OpenAPI file(s) in api/ with Redocly
-npm run build          # production build into build/ (fails on broken links or anchors)
+npm run lint:spec      # validate the OpenAPI file(s) in api/ (Redocly)
+npm run check:api      # compare the API pages with the OpenAPI file (report only)
 npm run typecheck      # type-check the TypeScript config files
+npm run build          # production build into build/ (fails on broken links or anchors)
 ```
-
-The OpenAPI file in `api/` is the single source of truth for the API. The interactive **API tester**
-page (`/api-tester`) renders it directly; the hand-written reference pages are kept consistent with it
-by `npm run check:api` (see [`AGENTS.md`](AGENTS.md) for the page template and the update procedures).
-
-## Maintaining the documentation
-
-- Editing pages: `docs/**`. API reference pages follow the template in [`AGENTS.md`](AGENTS.md).
-- The API changed or a new firmware version was released: follow Procedure A or B in [`AGENTS.md`](AGENTS.md).
-- Two variants are built from `docs/`: the default reference (`/`) and "Diag" (`/diag`, adds the
-  DIAG-build-only endpoints under `docs/reference/api-reference/diagnostics/`).
 
 ### Preview on a headless server
 
@@ -57,16 +52,45 @@ npm run serve -- --host 0.0.0.0 --port 3000
 # open http://<server-ip>:3000/hem-api-docs/
 ```
 
-`npm start` runs the development server with hot reload, also bound to `0.0.0.0:3000`
-(it does not run the broken-link checks; use `npm run build` for that).
+`npm start` runs the development server with hot reload, also bound to `0.0.0.0:3000` (it does not
+run the broken-link checks; use `npm run build` for that). The Diag variant is a copy made before
+`start`; after editing `docs/`, run `npm run sync:diag` (or `node scripts/sync-diag-docs.mjs --watch`)
+to refresh it.
 
 If port 3000 is not reachable, use an SSH tunnel instead:
 `ssh -L 3000:127.0.0.1:3000 <user>@<server>` and open <http://localhost:3000/hem-api-docs/>.
 
+## Site structure
+
+- **Default reference** at `/` (firmware 1.2.2, production endpoints).
+- **"1.2.2 Diag" variant** at `/diag`: the same pages plus the Diagnostics section for DIAG firmware
+  builds. Both are built from `docs/`; the navbar dropdown switches between them. The Diag variant is
+  excluded from search, sitemap and indexing.
+- **API tester** at `/api-tester`: [Scalar](https://scalar.com) renders `api/hem-api-<version>.yaml`
+  and can send requests from the browser directly to a device. Notes:
+  - the renderer is loaded at runtime from a pinned CDN URL (`cdn` in `docusaurus.config.ts`; bump the
+    version there to upgrade);
+  - requests go from the reader's browser to the device (no proxy), so the device's CORS `origin`
+    setting must allow the site origin, and the device's TLS certificate must be trusted by the browser.
+- **Search** is built into the site (no external service).
+- **Redirects**: every page is also reachable under the old GitBook prefix `/hem-api/…`, so links from
+  the previous site keep working once a custom domain points here.
+
+## Maintaining the documentation
+
+- Editing pages: `docs/**`. API reference pages follow the template in [`AGENTS.md`](AGENTS.md) §3.
+- **The API changed** (same firmware version): copy the updated `docs/openapi.yaml` from the
+  `encedo_firmware` repository over `api/hem-api-<version>.yaml`, then follow Procedure A in
+  [`AGENTS.md`](AGENTS.md) (lint → `npm run check:api` → fix pages → build).
+- **A new firmware / API version**: follow Procedure B in [`AGENTS.md`](AGENTS.md) (new spec file,
+  `docs:version` snapshot of the old reference, `apiVersion` and version settings in
+  `docusaurus.config.ts`, navbar dropdown entries).
+- Commit to `main`; CI deploys the site and prints the checker report in the job summary.
+
 ## Deployment
 
 Every push to `main` (and, during the migration, to `docusaurus`) runs
-`.github/workflows/deploy.yml`, which builds the site and publishes it to GitHub Pages.
+`.github/workflows/deploy.yml`, which lints the spec, builds the site and publishes it to GitHub Pages.
 Pull requests run `.github/workflows/pr-check.yml` (build only).
 
 ### GitHub configuration (one-time)
@@ -84,9 +108,18 @@ Pull requests run `.github/workflows/pr-check.yml` (build only).
    The default `GITHUB_TOKEN` permission can stay "Read repository contents"; the workflow
    requests `pages: write` and `id-token: write` itself.
 
-The site URL and base path are set once at the top of `docusaurus.config.ts`
-(`url` and `baseUrl`). Switching to a custom domain later means changing those two values,
-adding the DNS record and setting the custom domain in **Settings → Pages**.
+If a deploy fails, open the run in the Actions tab: the `build` job shows lint, typecheck and build
+errors; the `deploy` job shows Pages configuration problems (the two settings above).
+
+### Switching to a custom domain (e.g. `docs.encedo.com`)
+
+1. In `docusaurus.config.ts` change the two constants at the top: `url = 'https://docs.encedo.com'`,
+   `baseUrl = '/'`. Everything else (spec download URL, tester, redirects) derives from them.
+2. Add a DNS `CNAME` record `docs.encedo.com → encedo.github.io`, then set the custom domain in
+   **Settings → Pages** and enable "Enforce HTTPS". (GitHub Pages serves a custom domain at its root,
+   so the old `/hem-api/` prefix disappears; the built-in redirects map `/hem-api/…` to the new pages.)
+3. Disconnect the GitBook Git Sync integration for this repository, if still active, so GitBook
+   stops pushing to `main`.
 
 ## License
 

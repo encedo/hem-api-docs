@@ -12,7 +12,7 @@
 | M3 | Content migration (44 pages) + two instances + dropdown | done | c0c061d |
 | M4 | Update pages from the spec + new pages + checker + agent instructions | done | cedd4a8 |
 | M5 | Visual style | done | b22d5b6 |
-| M6 | Cleanup + maintainer docs | draft | |
+| M6 | Cleanup + maintainer docs | in-progress (awaiting acceptance) | |
 | M7 | Stabilise + merge to main | draft | |
 
 States: `draft` → `in-progress` (finalized, accepted by the user) → `done` (implemented, verified, accepted).

@@ -92,6 +92,25 @@ const config: Config = {
 
   plugins: [
     [
+      // The previous GitBook site lived under docs.encedo.com/hem-api/…: keep every page of the
+      // default reference reachable under that prefix (client-side redirects), so old links keep
+      // working once a custom domain points at this site.
+      '@docusaurus/plugin-client-redirects',
+      {
+        createRedirects(existingPath: string) {
+          if (existingPath === '/') {
+            return ['/hem-api'];
+          }
+          // Only the default reference gets the old prefix (not the Diag variant, the tester, the
+          // search page or the 404 page).
+          if (/^\/(diag|api-tester|search|404\.html)(\/|$)/.test(existingPath) || existingPath.startsWith('/hem-api')) {
+            return undefined;
+          }
+          return [`/hem-api${existingPath}`];
+        },
+      },
+    ],
+    [
       // "1.2.2 Diag" variant of the reference: same pages plus the Diagnostics section.
       '@docusaurus/plugin-content-docs',
       {
