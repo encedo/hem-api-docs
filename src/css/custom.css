@@ -1,49 +1,81 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Site styling. Infima (Docusaurus' CSS framework) is bundled; the variables below tune it to the
+ * Encedo branding of the original GitBook site: purple accent (#9B34DB), Inter + IBM Plex Mono.
  */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
+  --ifm-color-primary: #9b34db;
+  --ifm-color-primary-dark: #8e26cf;
+  --ifm-color-primary-darker: #8623c4;
+  --ifm-color-primary-darkest: #6e1da1;
+  --ifm-color-primary-light: #a84ae0;
+  --ifm-color-primary-lighter: #ae55e2;
+  --ifm-color-primary-lightest: #c07fea;
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ifm-font-family-monospace: 'IBM Plex Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  --ifm-code-font-size: 90%;
+  --ifm-heading-font-weight: 600;
+  --ifm-navbar-shadow: 0 1px 0 var(--ifm-color-emphasis-200);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --hem-method-get: #2f6fdb;
+  --hem-method-post: #2e8b57;
+  --hem-method-delete: #c62828;
+  --hem-method-other: #b26a00;
+  --scalar-color-accent: #9b34db;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* Lighter purple ramp for contrast on dark backgrounds. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
+  --ifm-color-primary: #b877e8;
+  --ifm-color-primary-dark: #ad64e4;
+  --ifm-color-primary-darker: #a758e2;
+  --ifm-color-primary-darkest: #9540d9;
+  --ifm-color-primary-light: #c38aec;
+  --ifm-color-primary-lighter: #c893ee;
+  --ifm-color-primary-lightest: #d9b3f4;
+  --ifm-background-color: #1a1523;
+  --ifm-background-surface-color: #221b2d;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --hem-method-get: #4d86e6;
+  --hem-method-post: #3fa66e;
+  --hem-method-delete: #d84b4b;
+  --scalar-color-accent: #b877e8;
+}
+
+/* ---------------------------------------------------------------- navbar & sidebar */
+.navbar__logo img {
+  height: 2rem;
+}
+.navbar__title {
+  font-weight: 600;
 }
 
 /* GitBook-style sidebar section headers (sidebars.ts `html` items). */
 .sidebar-heading {
   margin: 1.25rem 0 0.25rem 0.75rem;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ifm-color-emphasis-600);
 }
+.theme-doc-sidebar-menu > li:first-child .sidebar-heading {
+  margin-top: 0.5rem;
+}
+.menu__link {
+  font-size: 0.9rem;
+}
+.menu__link--active:not(.menu__link--sublist) {
+  font-weight: 600;
+}
 
+/* ---------------------------------------------------------------- content */
 /* Page description rendered as a subtitle (src/theme/DocItem/Content). */
 .doc-subtitle {
   margin-top: -0.75rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   font-size: 1.1rem;
+  line-height: 1.5;
   color: var(--ifm-color-emphasis-700);
 }
 
@@ -56,18 +88,55 @@
   margin-bottom: 1rem;
 }
 
-/* GitBook-style content-ref cards. */
+/* GitBook-style link cards (ContentRef and DocCardList). */
 .content-ref {
   margin-bottom: 1rem;
 }
+.content-ref .card,
+.docCardListItem .card {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.content-ref .card:hover,
+.docCardListItem .card:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 2px 8px rgba(155, 52, 219, 0.15);
+}
 
-/* API reference components (src/components/api). Final look is tuned in M5. */
+/* Tables: subtle header, no zebra stripes (closer to GitBook). */
+table {
+  display: table;
+  width: 100%;
+  font-size: 0.9rem;
+}
+table thead tr {
+  background: var(--ifm-color-emphasis-100);
+}
+table th {
+  font-weight: 600;
+  text-align: left;
+}
+table tr:nth-child(2n) {
+  background: transparent;
+}
+table td,
+table th {
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+/* Admonitions slightly tighter. */
+.theme-admonition {
+  font-size: 0.95rem;
+}
+
+/* ---------------------------------------------------------------- API reference components */
 .api-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin: 0.5rem 0;
+  margin: 0.4rem 0;
   font-size: 0.9rem;
 }
 .api-meta__label {
@@ -80,28 +149,33 @@
 .api-role {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.1rem 0.6rem;
+  gap: 0.35rem;
+  padding: 0.1rem 0.65rem;
   border-radius: 999px;
   border: 1px solid var(--ifm-color-emphasis-300);
   background: var(--ifm-color-emphasis-100);
+  line-height: 1.6;
+}
+.api-role__value {
+  font-weight: 700;
 }
 .api-role--allowed .api-role__value {
-  color: var(--ifm-color-success-darkest);
-  font-weight: 700;
+  color: #1f7a45;
 }
 .api-role--denied {
-  opacity: 0.7;
+  opacity: 0.75;
 }
 .api-role--denied .api-role__value {
-  color: var(--ifm-color-danger-dark);
-  font-weight: 700;
+  color: #b3261e;
 }
 [data-theme='dark'] .api-role--allowed .api-role__value {
-  color: var(--ifm-color-success-light);
+  color: #5fcf8a;
 }
 [data-theme='dark'] .api-role--denied .api-role__value {
-  color: var(--ifm-color-danger-light);
+  color: #ff7b72;
+}
+.api-scope__value {
+  font-size: 0.85rem;
 }
 .api-scope__alt {
   display: inline-flex;
@@ -113,14 +187,16 @@
 .api-scope__none {
   color: var(--ifm-color-emphasis-600);
 }
+
 .api-endpoint {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.6rem;
-  margin: 1rem 0;
-  padding: 0.6rem 0.8rem;
+  gap: 0.7rem;
+  margin: 1rem 0 1.25rem;
+  padding: 0.65rem 0.9rem;
   border: 1px solid var(--ifm-color-emphasis-200);
+  border-left: 4px solid var(--ifm-color-primary);
   border-radius: var(--ifm-global-radius);
   background: var(--ifm-color-emphasis-100);
 }
@@ -136,39 +212,50 @@
 }
 .api-endpoint__param {
   font-style: normal;
+  font-weight: 600;
   color: var(--ifm-color-primary);
 }
 .api-method {
   display: inline-block;
   min-width: 4.5rem;
-  padding: 0.15rem 0.5rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 4px;
   text-align: center;
   font-family: var(--ifm-font-family-monospace);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
+  letter-spacing: 0.02em;
   color: #fff;
+  background: var(--hem-method-other);
 }
 .api-method--get {
-  background: #2f6fdb;
+  background: var(--hem-method-get);
 }
 .api-method--post {
-  background: #2e8b57;
+  background: var(--hem-method-post);
 }
 .api-method--delete {
-  background: #c62828;
-}
-.api-method--put,
-.api-method--patch {
-  background: #b26a00;
+  background: var(--hem-method-delete);
 }
 .api-required {
   color: var(--ifm-color-danger);
   font-weight: 700;
   margin-left: 0.1rem;
 }
+
+/* Response-code tabs. */
+.api-response-codes .tabs__item {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+}
 .api-response-codes__empty {
   color: var(--ifm-color-emphasis-600);
   font-style: italic;
   margin: 0;
+}
+
+/* ---------------------------------------------------------------- footer */
+.footer {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  font-size: 0.9rem;
 }

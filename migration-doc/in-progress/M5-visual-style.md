@@ -28,4 +28,13 @@ Encedo branding and a GitBook-like feel across both variants and the tester: log
 - Footer wording: resolved 2026-09-28 → "Copyright © <year> Encedo Limited." plus a links column (encedo.com, Report a security issue, API examples on GitHub); no framework credit.
 
 ## Conclusions & hand-over
-_(filled when done)_
+Implemented 2026-09-28; awaiting the user's visual review on the preview (`http://192.168.0.153:3000/hem-api-docs/`, light and dark, `/diag`, `/api-tester`).
+
+- Branding: `static/img/encedo-logo.png` (588×588 PNG from the GitBook CDN, works on light and dark) in the navbar next to "Encedo HEM API"; `static/img/favicon.png` (64×64 derived with sharp-cli). Light mode by default, system preference ignored, toggle kept.
+- Palette `#9B34DB` with a lighter dark-mode ramp and a slightly purple dark background; Inter + IBM Plex Mono self-hosted via `@fontsource` (client module `src/fonts.ts`; 33 font files in `build/assets/fonts`, no Google Fonts request).
+- API components styled: method badges GET blue / POST green / DELETE red, endpoint line with a purple left border, roles pills (✓ green, ✗ red), scope chips, required asterisks, compact response tabs; tables without zebra stripes; subtitle; cover banner; link cards with purple hover.
+- Page-list cards without the emoji icon: `src/theme/DocCard/Heading/index.tsx` ejected (renders `Text` only). Applies to `DocCardList` and `ContentRef`.
+- Footer: "Copyright © <year> Encedo Limited." + links column (encedo.com, Report a security issue, API examples on GitHub); no framework credit.
+- Local search (`@easyops-cn/docusaurus-search-local`, `hashed`, docs route `/`), Diag routes excluded via `ignoreFiles: [/^diag(\/|$)/]` (the plugin matches the route without baseUrl).
+- Scalar accent colour follows the palette (`--scalar-color-accent`).
+- Hand-over to M6: README to mention fonts/search briefly; nothing else pending.

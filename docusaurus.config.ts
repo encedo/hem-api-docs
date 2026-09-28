@@ -30,6 +30,10 @@ const editUrl = ({docPath}: {docPath: string}) => `https://github.com/encedo/hem
 const config: Config = {
   title: 'Encedo HEM API Developer Manual',
   tagline: 'REST API documentation for the Encedo HEM hardware security module',
+  favicon: 'img/favicon.png',
+
+  // Self-hosted fonts (src/fonts.ts).
+  clientModules: ['./src/fonts.ts'],
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -124,13 +128,35 @@ const config: Config = {
     ],
   ],
 
+  themes: [
+    [
+      // Offline full-text search (index built at build time, no external service).
+      '@easyops-cn/docusaurus-search-local',
+      {
+        hashed: true,
+        docsRouteBasePath: '/',
+        indexBlog: false,
+        indexPages: false,
+        language: ['en'],
+        highlightSearchTermsOnTargetPage: true,
+        // The Diag variant duplicates every page; index the default variant only.
+        ignoreFiles: [/^diag(\/|$)/],
+      },
+    ],
+  ],
+
   themeConfig: {
     colorMode: {
+      // Light by default (user decision); the toggle stays available.
       defaultMode: 'light',
-      respectPrefersColorScheme: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: 'Encedo HEM API',
+      logo: {
+        alt: 'Encedo',
+        src: 'img/encedo-logo.png',
+      },
       items: [
         {
           // Version-style switch between the two variants of the reference.
@@ -157,6 +183,16 @@ const config: Config = {
     },
     footer: {
       style: 'light',
+      links: [
+        {
+          title: 'Encedo',
+          items: [
+            {label: 'encedo.com', href: 'https://encedo.com'},
+            {label: 'Report a security issue', to: '/security/report-an-issue'},
+            {label: 'API examples on GitHub', href: 'https://github.com/encedo/hem-api-examples'},
+          ],
+        },
+      ],
       copyright: `Copyright © ${new Date().getFullYear()} Encedo Limited.`,
     },
     prism: {
