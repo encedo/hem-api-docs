@@ -1,6 +1,6 @@
 # M4 — Update pages from the spec + new endpoint pages + checker + agent instructions (revised)
 
-State: draft
+State: in-progress (accepted 2026-09-28)
 
 ## Goal
 The hand-written API pages agree with `api/hem-api-1.2.2.yaml` (source of truth); spec-only endpoints are documented in the same style; a checker script reports spec ↔ pages drift; a future agent has complete, validated instructions.
@@ -35,8 +35,9 @@ The hand-written API pages agree with `api/hem-api-1.2.2.yaml` (source of truth)
 - User: reviews the Diagnostics pages (Diag variant), create-a-key, configuration, list-the-keys, storage; decides the legacy-only field list; confirms the spec's canonical home (this repo vs firmware repo) for the README.
 
 ## Open questions
-- Canonical home of the spec going forward (recommended: this repo; firmware repo copies).
-- Legacy-only fields (config POST `tls`, `gen_csr`, `emp`, `key`, `crt`, …): add to the spec or drop from the pages?
+Resolved 2026-09-28:
+- Canonical home of the spec: **the firmware repository** (`encedo_firmware/docs/openapi.yaml`). This repo keeps a copy per firmware release as `api/hem-api-<version>.yaml`. Spec edits made here (e.g. per-operation `security`) must be upstreamed; M4 lists them for the user.
+- Legacy-only fields (page documents a field the spec lacks): decided by the user from the checker report during M4.
 
 ## Conclusions & hand-over
 _(filled when done)_

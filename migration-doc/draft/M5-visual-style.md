@@ -11,6 +11,11 @@ Encedo branding and a GitBook-like feel across both variants and the tester: log
 - `src/css/custom.css`: Infima primary ramp for light/dark, font variables, method badge colours (GET blue, POST green, DELETE red), red `<Req />`, `Roles`/`Scope` rows, `ResponseCodes` tabs, table header styling, `.sidebar-heading`, `.doc-subtitle`, DocCard hover, Scalar accent (`--scalar-color-accent`).
 - `docusaurus.config.ts`: navbar logo + title, footer links (encedo.com, Report a security issue, Examples repo) and copyright with the manual version line, search theme.
 
+## User's visual notes from the M3 review (2026-09-28)
+- Encedo logo in the top-left corner of the navbar, next to "Encedo HEM API".
+- **Light mode by default** (do not follow the system preference; `colorMode: {defaultMode: 'light', respectPrefersColorScheme: false}`; keep the toggle).
+- Section index pages ("API Reference → System" etc.) list their child pages as cards: **remove the emoji icon** next to the page name (ugly, especially in dark mode) — on all such pages, i.e. `DocCardList` and `ContentRef` cards (eject `DocCard` and drop the icon).
+
 ## Acceptance criteria
 - Build passes; fonts served from `build/assets/fonts/`; palette applied in both modes; search finds "keymgmt:gen" and "Hall of fame" once (no Diag duplicates); section headers are non-collapsible labels.
 
