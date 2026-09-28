@@ -1,6 +1,6 @@
 # M5 — Visual style (revised)
 
-State: draft
+State: in-progress (accepted 2026-09-28)
 
 ## Goal
 Encedo branding and a GitBook-like feel across both variants and the tester: logo/favicon, `#9B34DB` palette (light + lighter dark ramp), self-hosted Inter and IBM Plex Mono, styled API components, sidebar section headers, cards, local search, footer.
@@ -25,7 +25,7 @@ Encedo branding and a GitBook-like feel across both variants and the tester: log
 
 ## Open questions
 - Default colour mode: resolved by the user's notes → light by default, toggle kept.
-- Footer wording: asked at acceptance.
+- Footer wording: resolved 2026-09-28 → "Copyright © <year> Encedo Limited." plus a links column (encedo.com, Report a security issue, API examples on GitHub); no framework credit.
 
 ## Conclusions & hand-over
 _(filled when done)_
