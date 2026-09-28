@@ -1,6 +1,6 @@
 # M4 — Update pages from the spec + new endpoint pages + checker + agent instructions (revised)
 
-State: in-progress (accepted 2026-09-28)
+State: done (implemented and accepted 2026-09-28, commit cedd4a8)
 
 ## Goal
 The hand-written API pages agree with `api/hem-api-1.2.2.yaml` (source of truth); spec-only endpoints are documented in the same style; a checker script reports spec ↔ pages drift; a future agent has complete, validated instructions.
@@ -40,7 +40,7 @@ Resolved 2026-09-28:
 - Legacy-only fields (page documents a field the spec lacks): decided by the user from the checker report during M4.
 
 ## Conclusions & hand-over
-Implemented 2026-09-28; awaiting the user's acceptance.
+Implemented and accepted 2026-09-28 (commit cedd4a8).
 
 - `scripts/check-api-docs.mjs` (Node, `yaml`): matches `<Endpoint operationId>` blocks to spec operations (consecutive blocks share sections); checks method/path, path/query/header parameters, body fields and required flags, response codes, enum tables ("Possible `x` values", page-level), scope tokens and the Master role; page-level or per-block `<Roles>`/`<Scope>`; `--json`, `--markdown`, `--strict`, `--only`; `scripts/check-api-docs.known-gaps.json` downgrades reviewed findings to "accepted". `npm run check:api`; both workflows run it as an informational step into the job summary.
 - Initial report: 201 errors / 25 warnings. `migration-doc/scripts/reconcile_pages.py` applied 164 mechanical fixes from the spec (missing response codes with titles, 411/412/413/500 on almost every operation; missing body fields `ctx`, `note`; required flags `msg`, `alg`, `ct`, `label`). Hand fixes: path parameters `{file}`, `{offset}/{count}` (the key-list variants are one block with a Path Parameters table instead of a wrong Request Body table); the firmware-install block had untitled response tabs (converted to `<ResponseCodes>`); configuration POST body: `emp`/`key`/`crt` moved to "Members of the `tls` object"; per-block `<Scope>` rows where one page-level row was wrong (configuration, firmware, management app, storage rw/ro, bootloader); derive-key scope `keymgmt:derive`; exact enum tables for derive/import from the spec (they differ from create-a-key).

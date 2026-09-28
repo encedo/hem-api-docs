@@ -24,8 +24,8 @@ Encedo branding and a GitBook-like feel across both variants and the tester: log
 - User: resemblance to docs.encedo.com in light and dark, both variants and the tester; logo size; contrast.
 
 ## Open questions
-- Default colour mode: follow system (recommended) or force light?
-- Footer wording.
+- Default colour mode: resolved by the user's notes → light by default, toggle kept.
+- Footer wording: asked at acceptance.
 
 ## Conclusions & hand-over
 _(filled when done)_
