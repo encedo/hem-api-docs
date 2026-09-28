@@ -1,6 +1,6 @@
 # M3 — Content migration (44 pages) + two docs instances + navbar dropdown (revised)
 
-State: in-progress (accepted 2026-09-28)
+State: done (implemented and accepted 2026-09-28, commit c0c061d; visual notes carried to M5)
 
 ## Goal
 All 44 legacy GitBook pages converted to MDX in the GitBook style by a scripted, idempotent converter; sidebar mirroring `SUMMARY.md`; two variants of the reference ("1.2.2" at `/`, "1.2.2 Diag" at `/diag`) from one source folder; navbar version dropdown.
@@ -39,7 +39,7 @@ Resolved 2026-09-28:
 - Version block ("Version: 1.7b (17.01.2026)" + certified-revision links) on Welcome and the API Reference index: **removed entirely**.
 
 ## Conclusions & hand-over
-Implemented 2026-09-28; awaiting the user's review on the preview (`http://192.168.0.153:3000/hem-api-docs/`, Diag variant under `/diag`).
+Implemented 2026-09-28; reviewed and accepted by the user on 2026-09-28 (visual remarks go to M5) (`http://192.168.0.153:3000/hem-api-docs/`, Diag variant under `/diag`).
 
 - Converter `migration-doc/scripts/gitbook2mdx.py` converts all 45 legacy files (44 SUMMARY pages incl. Welcome; section READMEs → `index.mdx`) with 0 errors; 3 warnings document a legacy typo (the Master roles tab titled "Alternative" on exdsa, ml-dsa, ml-kem → treated as Master). Rules as in PLAN.md, plus: scope tabs keep only the first code as `main` (all scope-like codes as `alt`) and any remaining prose is emitted as markdown under the `<Scope>` row; response-code titles normalised ("succsessful", HTTP reason-phrase prefixes, double spaces); all ```javascript fences hold JSON → ```json; `<` is escaped unless followed by whitespace or a known tag (e.g. `<[email](mailto:…)>`); JSX component lines are never escaped.
 - Welcome: Unsplash cover downloaded (1800 px, 238 KB) and shown as a banner; the "version of this documentation" section removed; on the API Reference index the certified-revision paragraph and "Version: 1.7b" line removed, the conventions text kept.

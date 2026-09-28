@@ -13,6 +13,13 @@ The hand-written API pages agree with `api/hem-api-1.2.2.yaml` (source of truth)
 - `AGENTS.md` (commands, invariants, page template, component reference, Procedure A "spec changed", Procedure B "new firmware version", validation checklist, limitations), `CLAUDE.md` (one-line pointer), README section "Maintaining the documentation".
 - `git rm -r legacy-gitbook/reference`.
 
+## Inputs from M3
+- Pages live in `docs/` (`.mdx` under `reference/api-reference/`, `.md` elsewhere); every endpoint block is `<Endpoint method path operationId />`, roles/scope are `<Roles>`/`<Scope>` rows, response codes are `<ResponseCodes>`/`<ResponseCode code title>`, required markers are `<Req />`, enum tables use the heading "Possible `x` values".
+- 16 spec operations have no page section: `diagTest`, `diagTestTrng`, `diagWipeConfig`, `diagBreakTemp`, `diagBreakTrng`, `diagBreakTls`, `diagDisableSelftest`, `diagCorruptRepo`, `diagMemdump`, `upgradeInstallBootloader`, `uploadBootloader`, `storageUnlockRw`, `storageUnlockRo`, `listKeys`, `listKeysOffset`, `listLogFiles`.
+- `sidebars-diag-items.json` currently holds one doc item (`reference/api-reference/diagnostics/index`); turn it into a category with the new Diagnostics pages. Diagnostics pages must not be linked from non-diag pages (the default instance excludes them).
+- Link anchors of renamed headings are already mapped (`possible-type-values`, `possible-mode-values-nist-ecc-keys-only`).
+- The converter is idempotent but M4 edits the generated pages by hand: do **not** re-run `gitbook2mdx.py` after M4 starts (it would overwrite the edits).
+
 ## Steps
 1. Write the checker first; run it to get the work list.
 2. Update existing pages; write the new pages; edit the spec (`security`); re-run until 0 errors.
