@@ -16,6 +16,17 @@ const baseUrl = '/hem-api-docs/';
 const apiVersion = '1.2.2';
 const specFile = `hem-api-${apiVersion}.yaml`;
 
+// Two variants of the reference are built from ONE source tree (docs/):
+//   default instance  → "/"      without the Diagnostics pages (DIAG firmware builds only)
+//   "diag" instance   → "/diag"  everything, read from docs-diag/, a copy made by
+//                                scripts/sync-diag-docs.mjs before start/build (gitignored).
+// Default excludes of @docusaurus/plugin-content-docs (GlobExcludeDefault), repeated here
+// because passing `exclude` replaces them.
+const GLOB_EXCLUDE_DEFAULT = ['**/_*.{js,jsx,ts,tsx,md,mdx}', '**/_*/**', '**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**'];
+const DIAG_PAGES = 'reference/api-reference/diagnostics/**';
+// Both instances edit the same source files under docs/.
+const editUrl = ({docPath}: {docPath: string}) => `https://github.com/encedo/hem-api-docs/edit/main/docs/${docPath}`;
+
 const config: Config = {
   title: 'Encedo HEM API Developer Manual',
   tagline: 'REST API documentation for the Encedo HEM hardware security module',
@@ -59,10 +70,15 @@ const config: Config = {
           // Docs-only mode: the documentation is served from the site root.
           routeBasePath: '/',
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/encedo/hem-api-docs/edit/main/',
+          exclude: [...GLOB_EXCLUDE_DEFAULT, DIAG_PAGES],
+          editUrl,
         },
         blog: false,
         pages: false,
+        sitemap: {
+          // The Diag variant duplicates every page; keep it out of the sitemap (noIndex below too).
+          ignorePatterns: [`${baseUrl}diag/**`],
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -71,6 +87,21 @@ const config: Config = {
   ],
 
   plugins: [
+    [
+      // "1.2.2 Diag" variant of the reference: same pages plus the Diagnostics section.
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'diag',
+        path: 'docs-diag',
+        routeBasePath: 'diag',
+        sidebarPath: './sidebars-diag.ts',
+        exclude: GLOB_EXCLUDE_DEFAULT,
+        editUrl,
+        versions: {
+          current: {label: `${apiVersion} Diag`, noIndex: true},
+        },
+      },
+    ],
     [
       // Interactive API tester rendering the full OpenAPI file (all operations, incl. DIAG-only).
       '@scalar/docusaurus',
@@ -101,6 +132,16 @@ const config: Config = {
     navbar: {
       title: 'Encedo HEM API',
       items: [
+        {
+          // Version-style switch between the two variants of the reference.
+          type: 'dropdown',
+          label: `v${apiVersion}`,
+          position: 'left',
+          items: [
+            {label: apiVersion, to: '/', activeBaseRegex: `^${baseUrl}(?!diag(/|$)|api-tester(/|$))`},
+            {label: `${apiVersion} Diag`, to: '/diag', activeBaseRegex: `^${baseUrl}diag(/|$)`},
+          ],
+        },
         {to: '/api-tester', label: 'API tester', position: 'left'},
         {
           href: 'https://encedo.com',

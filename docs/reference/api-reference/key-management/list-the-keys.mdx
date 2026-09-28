@@ -1,0 +1,105 @@
+---
+title: "List the keys"
+description: "This key management operation allows the listing of the keys from the repository."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:list" />
+
+## List the keys
+
+<Endpoint method="GET" path="/api/keymgmt/list/{offset}/{count}" operationId="listKeysPage" />
+
+List the keys stored in the repository with pagination.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Request Body
+
+| Name     | Type   | Description                                                                                                     |
+| -------- | ------ | --------------------------------------------------------------------------------------------------------------- |
+| `offset` | Number | Skip `offset` entries.                                                                                          |
+| `limit`  | Number | (required`offset`to be set)<br />Limit the number of return entries, default is 15 if skipped.  |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "offset": 0,
+  "total": 5,
+  "listed": 5,
+  "list": [{
+	"kid": "d4fda14010b3acd0d5482d9881a03fbf",
+	"created": 1647381409,
+	"type": "ATT,PKEY,GENERIC_DER",
+	"label": "TLS PrivateKey",
+	"descr": "RE5TOmlwMTEuZW5jZS5kbw==",
+	"updated": 1647381409
+  }, {
+	"kid": "761bbb76b4dcffd9a78df8b992caa0b6",
+	"created": 1647381469,
+	"type": "CERT,GENERIC_DER",
+	"label": "TLS Certificate",
+	"descr": "RE5TOmlwMTEuZW5jZS5kbw==",
+	"updated": 1647381469
+  }, {
+	"kid": "8b7eeb47a28bedb068915bf6513815f1",
+	"created": 1647804527,
+	"type": "ATT,PKEY,ECDH,CURVE25519",
+	"label": "Test key 1",
+	"updated": 1647804527
+  }, {
+	"kid": "aad3eabce0b97242fe328fbb2973b17c",
+	"created": 1647804552,
+	"type": "ATT,PKEY,ECDH,ExDSA,SECP384R1",
+	"label": "Signing key",
+	"updated": 1647804552
+  }, {
+	"kid": "4111bc76291bff8d319a056f15bb46f0",
+	"created": 1647802803,
+	"type": "ATT,PKEY,ECDH,CURVE448",
+	"label": "Chris main Transfer key",
+	"descr": "RVRTRlRYNTcyMDc0NzI1MjI1NTE3OWNocmlzQGVuY2Vkby5jb20=",
+	"updated": 1647802803
+  }]
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `listed` | Number | Number of listed keys |
+| `list` | Array of objects | An array of keys details |
+| `offset` | Number | Number of skipped keys (offset) |
+| `total` | Number | Number of keys in repository |
+| The `list` object contains: |  |  |
+| `created` | Number | Creation timestamp |
+| `descr` | String | Base64 encoded additional description |
+| `kid` | String | Key ID, 32 chars hex string |
+| `label` | String | Key label |
+| `type` | String | Type of a key |
+| `updated` | Number | Last update timestamp |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |

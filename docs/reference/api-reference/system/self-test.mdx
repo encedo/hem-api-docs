@@ -1,0 +1,80 @@
+---
+title: "Self-test"
+description: "This operation performs an internal full self-test of the device's critical components, including cryptography primitives, random number generator and key repository integrity."
+---
+
+<Roles user master ext />
+
+<Scope />
+
+Any. Only a valid access token is required; the access scope is not checked.
+
+:::info
+`The Authorization` header is not required on fresh, not personalised devices.
+:::
+
+## Get self-test status
+
+<Endpoint method="GET" path="/api/system/selftest" operationId="getSystemSelftest" />
+
+Retrieve the latest self-test status and rerun a new full test (only if one is not already in progress).
+
+#### Headers
+
+| Name          | Type   | Description       |
+| ------------- | ------ | ----------------- |
+| Authorization | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "last_selftest_ts": 1647615622,
+  "last_fls_state": 0,
+  "last_entropytest_ts": 1647615622,
+  "last_kat_ts": 1647606250,
+  "kat_busy": true,
+  "fls_state": 0,
+  "selftest_ts": 1647615642,
+  "se_state": 0
+}
+```
+
+</ResponseCode>
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `fls_state` | Number | Fail state number, default 0 as 'no errors'. |
+| `kat_busy` | Bool | `True` is KAT is ongoing. |
+| `last_entropytest_ts` | Number | Last entropy test timestamp. |
+| `last_fls_state` | Number | Last `fls_state.` |
+| `last_kat_ts` | Number | Last KAT timestamp. |
+| `last_selftest_ts` | Number | Last selftest timestamp. |
+| `selftest_ts` | Number | Current selftest timestamp. |
+| `se_state` | Number | (optional) Secure Enclave status (on Encedo PPA). |
+| `repo_stats` | Object | The following items are part of this object |
+| `total` | Number | Number of used storage slots |
+| `deleted` | Number | Number of used storage slots |
+| `invalid` | Number | Number of invalid slots |
+| `fragmented` | Number | Number of deleted slots to defragment |
+| `freeslots` | Number | Number of free slots |
+
+#### Indirectly produced log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_TRNG_FAILED | LOG_RESULT_OK | Entropy test failed |
+| LOG_TYPE_KEY_INTEGRITY_ERROR | LOG_RESULT_FAILED | Keystore integrity failed |
+| LOG_TYPE_KEY_INTEGRITY_ERROR | LOG_RESULT_OK | Keystore integrity passed |
+| LOG_TYPE_NON_SECURE_STATE | LOG_RESULT_OK | Enter FLS state |
+| LOG_TYPE_SELFTEST_PASSED | LOG_RESULT_FAILED | Powerup self-test failed |
+| LOG_TYPE_SELFTEST_PASSED | LOG_RESULT_OK | Powerup self-test passed |

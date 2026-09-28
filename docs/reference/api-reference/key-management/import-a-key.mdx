@@ -1,0 +1,89 @@
+---
+title: "Import a key"
+description: "This key management operation allows importing of a public key to the keys repository and treats it as a trusted key afterwards."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:imp" />
+
+## Import a public key
+
+<Endpoint method="POST" path="/api/keymgmt/import" operationId="importKey" />
+
+Import a public key and save it in the repository of keys.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                       | Type   | Description                            |
+| ------------------------------------------ | ------ | -------------------------------------- |
+| `descr`                                    | String | Base64 encoded additional description  |
+| `label`<Req />  | String | Label of a key                         |
+| `mode`                                     | String | Key operation mode (for NIST ECC only) |
+| `pubkey`<Req /> | String | Base64 encoded external public key     |
+| `type`<Req />   | String | Type of key to create                  |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "kid":"d51ea62a3f49a84cadbd0958e1499ecf"
+}
+```
+
+</ResponseCode>
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Possible `pubkey` values
+
+| Type       | Description                  |
+| ---------- | ---------------------------- |
+| SECP256R1  | NIST P-256 ECC key           |
+| SECP384R1  | NIST P-384 ECC key           |
+| SECP521R1  | NIST P-521 ECC key           |
+| SECP256K1  | SEC2-v2 ECC key              |
+| CURVE25519 | CURVE25519 ECC ECDH only key |
+| CURVE448   | CURVE4ECC ECDH only key      |
+| ED25519    | ED25519 ECC EdDSA only key   |
+| ED448      | ED448 ECC EdDSA only key     |
+| MLKEM512   | ML-KEM-512 key               |
+| MLKEM768   | ML-KEM-768 key               |
+| MLKEM1024  | ML-KEM-1024 key              |
+| MLDSA44    | ML-DSA-44 key                |
+| MLDSA65    | ML-DSA-65 key                |
+| MLDSA87    | ML-DSA-87 key                |
+
+#### Possible `mode` values (NIST ECC keys only)
+
+Check the list [here](create-a-key.mdx#possible-mode-values-nist-ecc-keys-only).
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `kid` | String | Key ID, 32-character hex string |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_KEY_IMPORT | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_KEY_IMPORT | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_KEY_IMPORT | LOG_RESULT_OK | 200 |

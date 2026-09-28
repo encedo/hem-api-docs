@@ -1,0 +1,40 @@
+---
+title: "Reboot"
+description: "This operation reboots the device, effectively invalidating all issued access tokens (JWT_TOKEN)."
+---
+
+<Roles user master ext />
+
+<Scope main="system:upgrade" alt={["system:config", "system:shutdown"]} />
+
+:::info
+`The Authorization` header is not required on fresh, not personalised devices.
+:::
+
+## Reboot
+
+<Endpoint method="GET" path="/api/system/reboot" operationId="getSystemReboot" />
+
+Reboot the device, simulate a power cycle.
+
+#### Headers
+
+| Name          | Type   | Description       |
+| ------------- | ------ | ----------------- |
+| Authorization | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_REBOOT | LOG_RESULT_OK | 200 |

@@ -1,0 +1,106 @@
+---
+title: "Authentication"
+description: "Those endpoints allow to authenticate based by External Authenticator."
+---
+
+:::info
+These two endpoints are wide open and do not need any authorization data.
+:::
+
+#### Phase 1 - challenge
+
+## Get a challenge
+
+<Endpoint method="POST" path="/api/auth/ext/request" operationId="postAuthExtRequest" />
+
+Get an authentication request data to challenge the external authenticator.
+
+#### Headers
+
+| Name                                           | Type   | Description      |
+| ---------------------------------------------- | ------ | ---------------- |
+| Content-Type<Req /> | String | application/json |
+
+#### Request Body
+
+| Name                                      | Type   | Description                     |
+| ----------------------------------------- | ------ | ------------------------------- |
+| `epk`<Req />   | String | Broker ephemeral public key     |
+| `scope`<Req /> | String | Requested access scope          |
+| `exp`<Req />   | Number | Requested lifetime of the token |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "authreq": "eyJlY2RoIjoieDI1NTE5IiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJpc3MiOiJmZjYvcnBncHJ3Nk9qY1BiZWRJQjVMYnN4alpxbW5mNDNKMXplSzF4ODJJPSIsImF1ZCI6Ik56bzNtUlpmN3YwRGhpN2dobkdPY3R0Qk42SFJqVGRhUG4vc1hhc3k3alU9IiwiaWF0IjoxNjQ3ODcxMTE3LCJleHAiOjE2NDc4NzQ3MTcsImp0aSI6ImpZUTRZdU0vUWJydEdvRElRdUNTUW1zdjdNek9sNytKM3ExRjdYM25CN2s9Iiwic2NvcGUiOnsiTC9EenNjUXJ0dGo4S0Y4QTE1WjFVbkJwaXdjTUdudXZTRy94cUlwOXI0UT0iOiJBL3loTmp2ZldFOGdOMU5FSElSR1hEVFFpeVdENlY4YzRyL0o3dCtDOE1nWUxpT3Y2SEpXUWplbmJueFU3aGZkRCJ9fQ.yiE_kG3FA4h-2MXO3r00WyS1ScbHijR6VBdNxKz1uTI",
+  "epk": "Nzo3mRZf7v0Dhi7ghnGOcttBN6HRjTdaPn/sXasy7jU="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="403" title="Clock RTC not set" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `authreq` | String | Authentication request |
+| `epk` | String | Broker ephemeral public key |
+
+#### Phase 2 - response
+
+## Post authentication data
+
+<Endpoint method="POST" path="/api/auth/ext/token" operationId="postAuthExtToken" />
+
+Post authentication data signed by an external authenticator.
+
+#### Headers
+
+| Name                                           | Type   | Description      |
+| ---------------------------------------------- | ------ | ---------------- |
+| Content-Type<Req /> | String | application/json |
+
+#### Request Body
+
+| Name                                          | Type   | Description                                       |
+| --------------------------------------------- | ------ | ------------------------------------------------- |
+| `authreply`<Req /> | String | Authentication data to be validated by the device |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6ImtleW1nbXQ6bGlzdCIsInN1YiI6IlFxL0VHZHZhY21Ock42SkZXVlhnbFE9PSIsImlhdCI6MTY0Nzg3MTEyMiwiZXhwIjoxNjQ3ODcyMDIwLCJqdGkiOiJrb1E0WXNDZjNMNGlUcmwycHk2Zzd0M2p2Vjlwd3dzSXI2Ly9GOTZPZllJPSJ9.u7lVd5B6CZxmM3Sch9HVBa5-MRadhDlNnCaCTeBq2DY"
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Argument authreply not authenticated" />
+<ResponseCode code="403" title="Clock RTC not set" />
+<ResponseCode code="406" title="Issuer not found" />
+<ResponseCode code="409" title="Conflict" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `token` | String | JWT access token (refered as JWT_TOKEN) |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_AUTH_SUCCESS_EXTERNAL | LOG_RESULT_OK | 200 |

@@ -1,0 +1,64 @@
+---
+title: "Get a public key"
+description: "This key management operation allows retrieving the public key of an asymmetric key stored inside the device's secure repository."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:get" alt={["keymgmt:gen", "keymgmt:use:<KID>"]} />
+
+where `<KID>` is a Key ID as a a 32-character hexadecimal string
+
+## Get a public key
+
+<Endpoint method="GET" path="/api/keymgmt/get/{kid}" operationId="getKey" />
+
+Get a public key from the asymmetric key only.
+
+#### Path Parameters
+
+| Name                                    | Type   | Description                      |
+| --------------------------------------- | ------ | -------------------------------- |
+| `kid`<Req /> | String | Key ID, 32-character hex string  |
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "type": "CURVE25519",
+  "pubkey": "IYBby9t5R6aiQ13CE0RJ7Z0jIMOIXGLN+U9Tebo3/CU=",
+  "updated": 1647787070
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `pubkey` | String | Base64 encoded public key |
+| `type` | String | Type of a key |
+| `updated` | String | Last update timestamp |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |

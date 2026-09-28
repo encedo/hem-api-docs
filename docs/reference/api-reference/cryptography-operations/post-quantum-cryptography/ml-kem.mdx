@@ -1,0 +1,129 @@
+---
+title: "ML-KEM"
+description: "This section describes two endpoints functional for key-encapsulation PQC operations - ML-KEM, FIPS 203 compliant."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:use:<KID>" />
+
+where `<KID>` is a Key ID as a 32-character hexadecimal string
+
+## Encapsulation
+
+### Generate a shared secret
+
+<Endpoint method="POST" path="/api/crypto/pqc/mlkem/encaps" operationId="cryptoMlkemEncaps" />
+
+The encapsulation algorithm ML-KEM accepts an encapsulation key as input, generates randomness internally, and outputs a ciphertext CT and a shared key SS.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                       |
+| --------------------------------------- | ------ | ------------------------------------------------- |
+| `kid`<Req /> | String | Key ID, 32-character hex string encapsulation key |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "ct": "4IzdVAZlsNHaUXGNaPMUg139TwnW5QB7WvVKAMEFnHF3JT122JTTnCHuZ1Z6sc2Hvz3WETWJ0ePKUVRJ5HzxDQ==",
+  "ss": "YBby9t5R6aiQ13CE0RJ7Z0jIMOIXGLN+U9Tebo3/CU=",
+  "alg": "MLKEM512"  
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS (https) connection required" />
+</ResponseCodes>
+
+#### Possible `alg` values
+
+| Algorithm | Description                         |
+| --------- | ----------------------------------- |
+| MLKEM512  | Regarding FIPS 203, ML-KEM-512 key  |
+| MLKEM768  | Regarding FIPS 203, ML-KEM-768 key  |
+| MLKEM1024 | Regarding FIPS 203, ML-KEM-1024 key |
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `alg` | String | ML-KEM algorithm type represented by the `kid` |
+| `ct` | String | Base64 encoded ciphertext |
+| `ss` | String | Base64 encoded shared secret |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_PQC_MLKEM_ENCAPS | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_PQC_MLKEM_ENCAPS | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_PQC_MLKEM_ENCAPS | LOG_RESULT_OK | 200 |
+
+## Decapsulation
+
+### Extract the shared secret
+
+<Endpoint method="POST" path="/api/crypto/pqc/mlkem/decaps" operationId="cryptoMlkemDecaps" />
+
+The decapsulation algorithm accepts a decapsulation key and an ML-KEM ciphertext as input, does not use any randomness, and outputs a shared.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                       |
+| --------------------------------------- | ------ | ------------------------------------------------- |
+| `ct`                                    | String | Base64 encoded ciphertext returned by `encaps`    |
+| `kid`<Req /> | String | Key ID, 32-character hex string decapsulation key |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "ss": "YBby9t5R6aiQ13CE0RJ7Z0jIMOIXGLN+U9Tebo3/CU="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_PQC_MLKEM_DECAPS | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_PQC_MLKEM_DECAPS | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_PQC_MLKEM_DECAPS | LOG_RESULT_OK | 200 |

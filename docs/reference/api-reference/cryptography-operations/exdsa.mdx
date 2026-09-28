@@ -1,0 +1,132 @@
+---
+title: "ExDSA"
+description: "Those basic cryptography operations allow the calculation and verify ExDSA signatures. ECDSA and EdDSA are supported."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:use:<KID>" />
+
+where `<KID>` is a Key ID as a 32-character hexadecimal string
+
+## Sign
+
+### Sign a message
+
+<Endpoint method="POST" path="/api/crypto/exdsa/sign" operationId="cryptoExdsaSign" />
+
+Return a signature of the given message.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                            |
+| --------------------------------------- | ------ | -------------------------------------- |
+| `alg`<Req /> | String | Algorithm to use (e.g. Ed25519ctx)     |
+| `ctx`                                   | String | Base64 encoded additional context data |
+| `msg`<Req /> | String | Data message to sign (max. 2048 bytes) |
+| `kid`<Req /> | String | Key ID, 32 chars hex string            |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "sign": "4IzdVAZlsNHaUXGNaPMUg139TwnW5QB7WvVKAMEFnHF3JT122JTTnCHuZ1Z6sc2Hvz3WETWJ0ePKUVRJ5HzxDQ=="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS (https) connection required" />
+</ResponseCodes>
+
+#### Possible `alg` values
+
+| Algorithm       | Description                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| SHA256WithECDSA | Regarding NIST SP 800-186                                                                  |
+| SHA384WithECDSA | Regarding NIST SP 800-186                                                                  |
+| SHA512WithECDSA | Regarding NIST SP 800-186                                                                  |
+| Ed25519         | Regarding RFC8032 [Section-5.1](https://datatracker.ietf.org/doc/html/rfc8032#section-5.1) |
+| Ed25519ph       | Regarding RFC8032 [Section-5.1](https://datatracker.ietf.org/doc/html/rfc8032#section-5.1) |
+| Ed25519ctx      | Regarding RFC8032 [Section-5.1](https://datatracker.ietf.org/doc/html/rfc8032#section-5.1) |
+| Ed448           | Regarding RFC8032 [Section-5.2](https://datatracker.ietf.org/doc/html/rfc8032#section-5.2) |
+| Ed448ph         | Regarding RFC8032 [Section-5.2](https://datatracker.ietf.org/doc/html/rfc8032#section-5.2) |
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `sign` | String | Base64 encoded signature |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_EXDSA_SIGN | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_EXDSA_SIGN | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_EXDSA_SIGN | LOG_RESULT_OK | 200 |
+
+## Verify
+
+### Verify the message signature
+
+<Endpoint method="POST" path="/api/crypto/exdsa/verify" operationId="cryptoExdsaVerify" />
+
+Verify the signature of the given message.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                     | Type   | Description                              |
+| ---------------------------------------- | ------ | ---------------------------------------- |
+| `alg`<Req />  | String | Algorithm to use (e.g. Ed25519ctx)       |
+| `ctx`                                    | String | Base64 encoded additional context data   |
+| `kid`<Req />  | String | Key ID, 32 chars hex string              |
+| `msg`<Req />  | String | Data message to verify (max. 2048 bytes) |
+| `sign`<Req /> | String | Signature to validate return by `sign`   |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Possible `alg` values
+
+Check the list [here](exdsa.mdx#possible-alg-values).
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_EXDSA_VERIFY | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_EXDSA_VERIFY | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_EXDSA_VERIFY | LOG_RESULT_OK | 200 |

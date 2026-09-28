@@ -1,0 +1,114 @@
+---
+title: "Management app"
+description: "These operations (on Encedo PPA only) allow the build-in management application to be upgraded. This includes integrity and signature validation allowing only a legitimate application to be installed."
+---
+
+:::warning
+Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA those endpoints are not available, response code 404 will be returned.
+:::
+
+<Roles user master ext />
+
+<Scope main="system:upgrade" alt="system:config" />
+
+:::info
+`The Authorization` header is not required on fresh, not personalized devices.
+:::
+
+:::info
+TLS connection is not required. It is a last resort way to upload fixes. Firmware is signed anyway, no worry about the integrity or genuineness.
+:::
+
+## Upload a file
+
+### Upload a new file
+
+<Endpoint method="POST" path="/api/system/upgrade/upload_ui" operationId="uploadDashboard" />
+
+Upload a new app image (webroot.tar) file.
+
+#### Headers
+
+| Name                                                  | Type   | Description                        |
+| ----------------------------------------------------- | ------ | ---------------------------------- |
+| Authorization                                         | String | Bearer JWT\_TOKEN                  |
+| Content-Type<Req />        | String | application/octet-stream           |
+| Content-Disposition<Req /> | String | attachment; filename="webroot.tar" |
+| Expect<Req />              | String | 100-continue                       |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Validate a file
+
+### Check a file
+
+<Endpoint method="GET" path="/api/system/upgrade/check_ui" operationId="upgradeCheckUi" />
+
+Check the signature and integrity of the newly uploaded app image.
+
+#### Headers
+
+| Name          | Type   | Description       |
+| ------------- | ------ | ----------------- |
+| Authorization | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="201" title="Process of validation started" />
+<ResponseCode code="202" title="Validation ongoing" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Install the new management app
+
+<Endpoint method="GET" path="/api/system/upgrade/install_ui" operationId="upgradeInstallUi" />
+
+A new version of Encedo Manager will be installed on Encedo PPA.
+
+#### Headers
+
+| Name          | Type   | Description       |
+| ------------- | ------ | ----------------- |
+| Authorization | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="406" title="Operation failed" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_UPGRADE | LOG_RESULT_ERROR | 406 |
+| LOG_TYPE_UPGRADE | LOG_RESULT_ERROR | 409 |
+| LOG_TYPE_UPGRADE | LOG_RESULT_OK | 200 |

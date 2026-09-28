@@ -1,0 +1,133 @@
+---
+title: "Version & Status"
+description: "Two endpoints to gather general information about the device."
+---
+
+:::info
+These two endpoints are wide open and do not need any authorization data, except two comments below.
+:::
+
+## Get device version
+
+:::info
+`The Authorization` header is ONLY required to get information about microSD's card CSD and CID values.
+:::
+
+## System version
+
+<Endpoint method="GET" path="/api/system/version" operationId="getSystemVersion" />
+
+Get hardware and firmware version information.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Successful operation">
+
+```json
+{
+  "hwv": "PPA rev 2.2",
+  "fwv": "Encedo nGINE FW v1.2.2",
+  "fwk": "/7jPJUl1e7jKOQZoYR2PVYj7Z/yjWxUXr4cbOxT2yWY=",
+  "fws": "+m1eRKD2C67r2zMw8n8smFwMEcCXX+aU8zlTO3ZzxBtOxy10KxzscKW2qH6eS0z2BqHgbebjFgmfsAEH+/4iBg==",
+  "blv": "Encedo Secure Bootloader v2.0.1",
+  "blk": "T/BAge1QXxgu9LJ+lYDrBlfupwGZsJP26lVOLEpsd44=",
+  "bls": "jVI0DTN0drzmQFd60OnSrdlbE5Nt2JiiffypkXBENMXv+CtGHZSdoAVhF5YXlXGt2mZ1tPDuCn/SYwGTsxQxDQ==",
+  "uis": "Ah7r6v+b7A3r5CgSa6NQfW/ZHbuPC6ZPWyXz+8gLB7w="
+}
+```
+
+</ResponseCode>
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `hwv` | String | Hardware version information. |
+| `fwv` | String | Firmware version infomation. |
+| `fwk` | String | Firmware signing public key (base64 encoded). |
+| `fws` | String | Firmware siganture (base64 encoded). |
+| `blv` | String | Bootloader version information. |
+| `blk` | String | Bootloader signing public key (base64 encoded). |
+| `bls` | String | Bootloader siganture (base64 encoded). |
+| `sd_csd` | String | (optional) Embedded microSD card CSD value (on Encedo PPA only, require valid token). |
+| `sd_cid` | String | (optional) Embedded microSD card CID value (on Encedo PPA only, require valid token). |
+| `uis` | String | (optional) Encedo Manager version hash (on Encedo PPA only). |
+
+## Get device status
+
+:::info
+`The Authorization` header is ONLY required to get information about statistics of the key repository memory.
+:::
+
+## System status
+
+<Endpoint method="GET" path="/api/system/status" operationId="getSystemStatus" />
+
+Get the device's online status information (including FLS state info).
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Successful operation">
+
+```json
+{
+  "ctx": 0,
+  "uptime": 13236,
+  "ts": "2022-03-16T18:17:27Z",
+  "time": 1647454647,
+  "storage": ["8388607:rw", "112590844:-"],
+  "temp": 31,
+  "fls_state": 0
+}
+```
+
+</ResponseCode>
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type |  |
+|---|---|---|
+| `ctx` | Number | Context number. |
+| `fls_state` | Number | Fail state value, default 0 as 'no errors'. |
+| `format` | String | (optional) Return during personalization, indicating embedded disk formatting state (on Encedo PPA only). |
+| `fw_upgrade` | Bool | (optional) `True` if successfully rebooted after the firmware upgrade. |
+| `inited` | Bool | (optional) `False` if the device is not personalized. |
+| `https` | Bool | (optional) `True` or `False` to indicate if HTTPS mode is available, returned only if called by HTTP endpoint. |
+| `hostname` | String | (optional) Return the device hostname if the request `Host` header is different. |
+| `repo_stats` | Object | Statistics of the key repository memory (next five data). |
+| `deleted` | Number | Number of deleted slots |
+| `fragmentation` | Number | Fragmentation (in %, ratio deleted to occupied) |
+| `freeespace` | Number | Total number of free slots |
+| `invalid` | Number | Number of invalid slots |
+| `total` | Number | Total used slots |
+| `storage` | Array of strings | Capacity and status of each embedded disks (on Encedo PPA only). |
+| `temp` | Number | Chip temperature in Celsius. |
+| `time` | Number | optional) Current Unix timestamp, returned if RTC is set. |
+| `ts` | String | (optional) Current time & date in ISO8601, returned if RTC is set. |
+| `tts` | Bool | (optional) Return `False` is option 'TrustedTime' is set to false. |
+| `uptime` | Number | Number of seconds since the device boots. |
+
+#### Fail state values (bitmasks)
+
+* 00h - no errors
+* 01h - KAT failure
+* 02h - Entropy failure
+* 04h - Temperature out of range
+* 08h - Data integrity failure
+* 10h - out of memory, malloc() failure detected
+* 20h - stack overflow detected
+* 40h - failure after check-in (locked)
+* 80h - failure after check-in (shutdown)
+
+#### Storage status (on Encedo PPA)
+
+The `storage` object is an array of two string elements, the first for Disk 0 (regular drive) and the second for Disk 1 (secure drive). Those strings are a concatenation of the disk size, which is the number of sectors (an integer), and the lock/unlock mode.
+
+Example: `["8388607:rw", "112590844:-"]` means:
+
+* Disk 0 size is 8388607 sectors (every 512 bytes long) and the disk is unlocked in RW mode (read & write).
+* Disk 1 size is 112590844 sectors and is locked ('-' means unavailable/locked, 'rw' means unlocked for read & write, and 'ro' means unlocked in read-only mode.

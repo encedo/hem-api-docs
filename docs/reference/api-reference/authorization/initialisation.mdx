@@ -1,0 +1,109 @@
+---
+title: "Initialisation"
+description: "Encedo HEM needs to be initialised before it's usable. This process is called Personalisation, and these two API endpoints are dedicated to this operation."
+---
+
+:::info
+These two endpoints are wide open and do not need any authorisation data. After the successful personalisation of the device, future calls will raise Error 406.
+:::
+
+:::info
+The format of the initialisation data is described in _"General information"_.
+:::
+
+## Personalization
+
+#### Phase 1 - challenge
+
+## Get challenge data
+
+<Endpoint method="GET" path="/api/auth/init" operationId="getInitChallenge" />
+
+Get initial data (challenge) as the first step in the personalisation process.
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "exp": 1647936471,
+  "spk": "dONxxYB9mq9C3UjrVCgkAw6O30JqZkFprT55fq3ZfAM=",
+  "jti": "m4M5Yn6HNoyABv+W1JiIQtSP4xiq6PBD1x5b2/PlJl8=",
+  "genuine": "LH8nwNPgH3PV+zfry/Savrso/Q4=.MTY0NzkzNjQ3MQ==.MEYCIQD0GFLsc0JGDo5QoWY1m/Jcw7FKpe5kPoaRop6EWvBfhQIhALMA3DwwigtCTIL5Sopa38aWZUL4AGYUVq3u1v6f2Pjn",
+  "eid": "lvVc8WGbc8m95VvUVgZO7Z1maYOPdX8Pn0cveNPtYyA="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="403" title="Clock RTC not set" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="406" title="Operation failed" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `eid` | String | EncedoID, public key of the instance |
+| `exp` | String | Expire timestamp |
+| `genuine` | String | Attestation data |
+| `jti` | String | Token id |
+| `spk` | String | Session public key |
+
+#### Phase 2 - response
+
+## Upload the initial configuration
+
+<Endpoint method="POST" path="/api/auth/init" operationId="postAuthInit" />
+
+Upload a well-formatted initial configuration signed by the user's passphrase.
+
+#### Headers
+
+| Name                                           | Type   | Description      |
+| ---------------------------------------------- | ------ | ---------------- |
+| Content-Type<Req /> | String | application/json |
+
+#### Request Body
+
+| Name                                     | Type   | Description              |
+| ---------------------------------------- | ------ | ------------------------ |
+| `init`<Req /> | String | Initialization structure |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "instanceid": "e7aafede-76b1-c7c8-784b-c963967fe307",
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6InN5c3RlbTpjb25maWciLCJzdWIiOiJVIiwiaWF0IjoxNjQ3OTM2NDE2LCJleHAiOjE2NDc5NjUyMTYsImp0aSI6Im9JTTVZbElqYXYwRUdqQlpxVDdtbDZ3Q0d4WTRYcmpGR0lweWd6Q1lEbWM9In0.aAW7qaAjbD9y36VI0XVtO-f8l2kV0T4Y4kZZxpaAPEg",
+  "genuine": "LH8nwNPgH3PV+zfry/Savrso/Q4=.MTY0NzkzNjQ3Ng==.MEQCIHJ2fARkMLCM3bb8wBImJWQMgCOCnt+x8idort0IVnP+AiA4hSYO3hV6K8/vZKAiAyiJxYMQyxHQo5qP1P2AEqEiRw=="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="403" title="Clock RTC not set" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Initialization structure validation failed" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `genuine` | String | Attestation data |
+| `instanceid` | String | Instance unique ID |
+| `token` | String | JWT access token (referred to as JWT_TOKEN) |
+
+#### Log entries (directly and indirectly as indicated)
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_DEVICE_INITED | LOG_RESULT_OK | 200 |
+| LOG_TYPE_STARTUP | LOG_RESULT_OK | On every powerup as second log entry (the first is `LOG_TYPE_KEY_INIT`) |

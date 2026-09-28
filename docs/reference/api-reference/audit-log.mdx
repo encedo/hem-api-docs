@@ -1,0 +1,173 @@
+---
+title: "Audit log"
+description: "Get an audit log signing key (all configuration) and on Encedo PPA only get a log list & files."
+---
+
+<Roles user master ext />
+
+<Scope main="logger:get" />
+
+## Get a log signing key
+
+<Endpoint method="GET" path="/api/logger/key" operationId="getLoggerKey" />
+
+Return a key used to sign the log file header as proof of the source's digital authenticity.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "key": "T61jY1AgV5XUW++eAcQibRDFOl5KjKwLGdo+U0def8A=",
+  "nonce": "P4M0YrCmPemejJg2zRYFPl4uZu7p8kG1IQDnrRHLMZg=",
+  "nonce_signed": "/rgJmzoAbGLIQEg/meAxF2vrYWcvFnbeMNkaQDfS8RKvaBuj7/HPcObkz9X0HX+V53xyh8YJR+lJ6AO727PRBQ=="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access 'scope'" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `key` | String | Base64 encoded ED25519 public key |
+| `nonce` | String | Base64 encoded random nonce |
+| `nonce_signed` | String | Base64 encoded ED25519 signature of the `nonce`. |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Get a list of log entries
+
+:::info
+Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA these two endpoints are not available, response code 404 will be returned.
+:::
+
+## Get a list of logs
+
+<Endpoint method="GET" path="/api/logger/list/{offset}" operationId="listLogFilesOffset" />
+
+Get a list of available log files.
+
+#### Path Parameters
+
+| Name     | Type   | Description                  |
+| -------- | ------ | ---------------------------- |
+| `offset` | Number | Skip '`offset`' logs entries |
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "total": 3,
+  "id": ["62310b2b", "62310bf6", "6231f603"]
+}
+```
+
+</ResponseCode>
+<ResponseCode code="401" title="Missing or invalid access token" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="404" title="Missing log entries" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `total` | Number | Total number of logs entries. |
+| `id` | Array of strings | An array of logs File IDs |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_LOGGER_LIST_LOG | LOG_RESULT_OK | 200 |
+| LOG_TYPE_LOGGER_LIST_LOG | LOG_RESULT_FAILED | 404 |
+
+:::info
+A maximum of 128 log entries are returned by one call. Use the `offset`argument for pagination.
+:::
+
+## Get a log file
+
+:::info
+Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA these two endpoints are not available, response code 404 will be returned.
+:::
+
+## Get a log file
+
+<Endpoint method="GET" path="/api/logger/{file}" operationId="getLogFile" />
+
+Get a log file for a given ID.
+
+#### Path Parameters
+
+| Name                                   | Type   | Description             |
+| -------------------------------------- | ------ | ----------------------- |
+| `id`<Req /> | String | File ID e.g. "62310b2b" |
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="File content retrieved">
+
+```
+# Encedo HEM v0.9.77 (#ff0a263)
+0|62310ba5|0|0|NgPWx9MnmngrKa7xkSuQnDcwBlDV5JeR0OoX6gFyMpo|sMfJhY2jjkQLb7dVGlWf_GynEOTZVh5tO33k8Iq52jB0CAECs1ysU3NenhlmWBWyTo1XEaqL-ysBVB7quNHDBA|XEwWbRXrh65JPjAjb-9bwg
+1|62310ba5|1|0|||rfB1gKL0hTi5tGh8PDerAA
+2|62310ba5|7|0|||dsutQDgmuLtecPIwPDctdA
+3|62310ba5|13|0||NQsxYg|bODm1bUzTiX6qS7LheDJFA
+4|62310ba6|1d|0|M||9b_vMf0QXC-qEhi-kQ4zpg
+5|62310bdd|12|0|U||Rhwgm9ZQx-RGfrjESNxhDQ
+6|62310c0c|2|0|U||IhCfo8F_OHBLhgOGXE5vPA
+
+```
+
+</ResponseCode>
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="404" title="File not found" />
+<ResponseCode code="406" title="Operation failed (e.g. file busy)" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_LOGGER_READ_LOG | LOG_RESULT_OK | 200 |
+| LOG_TYPE_LOGGER_READ_LOG | LOG_RESULT_FAILED | 404 |

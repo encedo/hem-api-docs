@@ -1,0 +1,124 @@
+---
+title: "Firmware"
+description: "These operations allow the device firmware to be upgraded by uploading a new firmware image over API. This includes integrity and signature validation allowing only a legitimate firmware to be install"
+---
+
+:::warning
+Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA those endpoints are not available, and response code 404 will be returned.
+:::
+
+<Roles user master ext />
+
+<Scope main="system:upgrade" alt="system:config" />
+
+:::info
+`The Authorization` header is not required on fresh, not personalized devices.
+:::
+
+:::info
+TLS connection is not required. It is a last resort way to upload fixes. Firmware is signed anyway, no worry about the integrity or genuineness.
+:::
+
+## Upload the file
+
+### Upload a new firmware
+
+<Endpoint method="POST" path="/api/system/upgrade/upload_fw" operationId="uploadFirmware" />
+
+Upload a new firmware image (firmware.bin) file.
+
+#### Headers
+
+| Name                                                  | Type   | Description                         |
+| ----------------------------------------------------- | ------ | ----------------------------------- |
+| Authorization                                         | String | Bearer JWT\_TOKEN                   |
+| Content-Type<Req />        | String | application/octet-stream            |
+| Content-Disposition<Req /> | String | attachment; filename="firmware.bin" |
+| Expect<Req />              | String | 100-continue                        |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Validate the uploaded file
+
+### Check firmware
+
+<Endpoint method="GET" path="/api/system/upgrade/check_fw" operationId="upgradeCheckFw" />
+
+Verify that the newly uploaded firmware file is valid.
+
+#### Headers
+
+| Name          | Type   | Description       |
+| ------------- | ------ | ----------------- |
+| Authorization | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="202" title="Validation ongoing" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="201" title="Process of validation started" />
+<ResponseCode code="406" title="Operation failed" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Install new firmware
+
+### Install firmware
+
+<Endpoint method="GET" path="/api/system/upgrade/install_fw" operationId="upgradeInstallFw" />
+
+Install uploaded and validated firmware (checked) in bootloader mode (the device will reboot on 200).
+
+#### Headers
+
+| Name          | Type   | Description       |
+| ------------- | ------ | ----------------- |
+| Authorization | String | Bearer JWT\_TOKEN |
+
+<Tabs>
+<TabItem value="200-operation-successful" label="200: Operation successful">
+
+</TabItem>
+<TabItem value="401-missing-or-invalid-jwt_token" label="401: Missing or invalid JWT_TOKEN">
+
+</TabItem>
+<TabItem value="403-incorrect-access-scope" label="403: Incorrect access scope">
+
+</TabItem>
+<TabItem value="409-incorrect-internal-state" label="409: Incorrect internal state">
+
+</TabItem>
+<TabItem value="406-operation-failed" label="406: Operation failed">
+
+</TabItem>
+</Tabs>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_UPGRADE | LOG_RESULT_ERROR | 406 |
+| LOG_TYPE_UPGRADE | LOG_RESULT_ERROR | 409 |
+| LOG_TYPE_UPGRADE | LOG_RESULT_OK | 200 |

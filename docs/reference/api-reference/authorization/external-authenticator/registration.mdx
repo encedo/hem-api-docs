@@ -1,0 +1,176 @@
+---
+title: "Registration"
+description: "Those endpoints allow to register a external authenticator, like Encedo Mobile Authenticator."
+---
+
+<Roles user master={false} ext={false} />
+
+<Scope main="auth:ext:pair" alt="system:config" />
+
+## Register a new authenticator
+
+#### Phase 1 - challenge
+
+## Get the registration challenge and begin the process
+
+<Endpoint method="POST" path="/api/auth/ext/init" operationId="postAuthExtInit" />
+
+Generate a challenge to link the device with a new external authenticator.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                 |
+| --------------------------------------- | ------ | --------------------------- |
+| `epk`<Req /> | String | Broker ephemeral public key |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "request": "eyJlY2RoIjoieDI1NTE5IiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiI5cHM0WWlySDdUZTB0ZWZwanl6Q2NQNTYzRjhTK2daeGJCTVg5VExFQnZnPSIsImV4cCI6MTY0Nzk2MzUxMCwiYXVkIjoiL05HU0F2dTltNjRpQzc5d2FrR3ZMYzdSYlcrclhkcnVZUHVlOXYwbmZIST0iLCJpc3MiOiJmZjYvcnBncHJ3Nk9qY1BiZWRJQjVMYnN4alpxbW5mNDNKMXplSzF4ODJJPSJ9.M0gYXmgB9cpI1YF48SG5iI7OcMRxRC-uqlIHaiAFrUQ",
+  "eid": "ff6/rpgprw6OjcPbedIB5LbsxjZqmnf43J1zeK1x82I="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `eid` | String | EncedoID, public key of the instance. |
+| `request` | String | Registration data to proxy to the external authenticator. |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+#### Phase 2 - response
+
+## Upload the registration reply and validate registration
+
+<Endpoint method="POST" path="/api/auth/ext/validate" operationId="postAuthExtValidate" />
+
+Upload a registration reply data sent by an external authenticator.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                      | Type   | Description                               |
+| ----------------------------------------- | ------ | ----------------------------------------- |
+| `pid`<Req />   | String | Unique Pairing ID                         |
+| `reply`<Req /> | String | Reply data sent by external authenticator |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "kid": "42afc419dbda72636b37a2455955e095",
+  "code": "3SABMB8RqE2XH2floeEqg7obeyn/TtqK1hk/hi+4N8k="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `code` | String | Confirmation code |
+| `kid` | String | Key ID of saved authenticator public key |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_AUTH_PAIRED_EXTERNAL | LOG_RESULT_OK | 200 |
+
+## List registered authenticators
+
+### Get authentication data
+
+<Endpoint method="POST" path="/api/auth/ext/mac" operationId="postAuthExtMac" />
+
+Obtain MAC data to authenticate the device on the broker site and retrieve a list of paired authenticators.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                 |
+| --------------------------------------- | ------ | --------------------------- |
+| `epk`<Req /> | String | Broker ephemeral public key |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "nonce": "XJ04YiV/Mh517cV0zqG+XEeCGbGNBt2PUnWcCtV7NVg=",
+  "mac": "ttyTJLTi+bguIwU9mW+5dCEy6l55YyQZZ4tq8tR8WRE=",
+  "eid": "ff6/rpgprw6OjcPbedIB5LbsxjZqmnf43J1zeK1x82I="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `eid` | String | EncedoID, public key of the instance. |
+| `mac` | String | Authentication data |
+| `nonce` | String | Authentication data nonce |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |

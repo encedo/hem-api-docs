@@ -1,0 +1,84 @@
+---
+title: "Derive a key"
+description: "This key management operation allows to derive a new key and save it inside the device's secure repository."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:ecdh" alt="keymgmt:gen" />
+
+## Derive a new key
+
+<Endpoint method="POST" path="/api/keymgmt/derive" operationId="deriveKey" />
+
+Derive (create) a new key using ECDH with a source key and save it.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                      | Type   | Description                            |
+| ----------------------------------------- | ------ | -------------------------------------- |
+| `descr`                                   | String | Base64 encoded additional description  |
+| `ext_kid`                                 | String | External Key ID, 32 chars hex string   |
+| `kid`<Req />   | String | Key ID, 32 chars hex string            |
+| `label`<Req /> | String | Label of a key                         |
+| `mode`                                    | String | Key operation mode (for NIST ECC only) |
+| `pubkey`                                  | String | Base64 encoded external public key     |
+| `type`<Req />  | String | Type of key to create                  |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "kid":"bd0958e1499ecfd51ea62a3f49a84cad"
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+:::info
+The key type pointed to `ext_kid` or represented by `pubkey` MUST be the same as the `kid` key type. Otherwise, indirect ECDH will fail.
+:::
+
+:::warning
+To generate ECC keys (NISP & SECP only), the generated seed needs to be validated to ensure it is in the correct range. As a result, this endpoint can fail without being an error.
+:::
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `kid` | String | Key ID, 32-character hex string |
+
+#### Possible `type` values
+
+Please refer to the list [here](create-a-key.mdx#possible-type-values); note that ML-KEM and ML-DSA keys cannot be derived, only generated. These exceptions apply to the list.
+
+#### Possible `mode` values (NIST ECC keys only)
+
+Check the list [here](create-a-key.mdx#possible-mode-values-nist-ecc-keys-only).
+
+#### Log entries
+
+|  |  |  |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_KEY_DERIVE | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_KEY_DERIVE | LOG_RESULT_ERROR | 406 |
+| LOG_TYPE_KEY_DERIVE | LOG_RESULT_OK | 200 |

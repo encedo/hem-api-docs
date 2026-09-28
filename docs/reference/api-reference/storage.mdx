@@ -1,0 +1,74 @@
+---
+title: "Storage"
+description: "These endpoints controls two embedded Flash Drives - regular and encrypted, available on Encedo PPA only."
+---
+
+:::warning
+Embedded Flash Drive is available on Encedo PPA only. On Encedo EPA these two endpoints are not available, response code 404 will be returned.
+:::
+
+<Roles user master={false} ext />
+
+<Scope main="storage:disk[0|1][:rw]" />
+
+Example:
+
+`storage:disk0:rw` - Unlock Disk0 in read/write mode or lock Disk0
+
+`storage:disk1` - Unlock Disk1 in read-only mode or lock Disk1
+
+## Unlock a disk
+
+<Endpoint method="GET" path="/api/storage/unlock" operationId="storageUnlock" />
+
+Disk number and mode (read-only or read/write) are taken from the access `scope` from JWT\_TOKEN.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+
+## Lock a disk
+
+<Endpoint method="GET" path="/api/storage/lock" operationId="storageLock" />
+
+Disk number is taken from the access `scope` of the JWT\_TOKEN.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid access token" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |

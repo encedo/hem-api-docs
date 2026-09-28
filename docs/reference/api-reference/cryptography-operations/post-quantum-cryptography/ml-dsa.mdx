@@ -1,0 +1,123 @@
+---
+title: "ML-DSA"
+description: "These two basic cryptography operations allow the calculation and verification of the ML-DSA signatures."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:use:<KID>" />
+
+where `<KID>` is a Key ID as a 32-character hexadecimal string
+
+## Sign
+
+### Sign a message
+
+<Endpoint method="POST" path="/api/crypto/pqc/mldsa/sign" operationId="cryptoMldsaSign" />
+
+Return an ML-DSA signature of the given message.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                             |
+| --------------------------------------- | ------ | ------------------------------------------------------- |
+| `ctx`                                   | String | Base64 encoded additional context data (max. 255 bytes) |
+| `kid`<Req /> | String | Key ID, 32 chars hex string                             |
+| `msg`<Req /> | String | Data message to sign (max. 2048 bytes)                  |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "sign": "4IzdVAZlsNHaUXGNaPMUg139TwnW5QB7WvVKA...22JTTnCHuZ1Z6sc2Hvz3WETWJ0ePKUVRJ5HzxDQ==",
+  "alg": "MLDSA44"  
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS (https) connection required" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `sign` | String | Base64 encoded signature |
+| `alg` | String | ML-DSA algorithm type represented by the `kid` |
+
+#### Possible `alg` values
+
+| Algorithm | Description                      |
+| --------- | -------------------------------- |
+| MLDSA44   | Regarding FIPS 204 ML-DSA-44 key |
+| MLDSA65   | Regarding FIPS 204 ML-DSA-65 key |
+| MLDSA87   | Regarding FIPS 204 ML-DSA-87 key |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_PQC_MLDSA_SIGN | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_PQC_MLDSA_SIGN | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_PQC_MLDSA_SIGN | LOG_RESULT_OK | 200 |
+
+## Verify
+
+### Verify the message signature
+
+<Endpoint method="POST" path="/api/crypto/pqc/mldsa/verify" operationId="cryptoMldsaVerify" />
+
+Verify the signature of the given message.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                     | Type   | Description                                            |
+| ---------------------------------------- | ------ | ------------------------------------------------------ |
+| `ctx`                                    | String | Base64 encoded additional context data (max. 64 bytes) |
+| `kid`<Req />  | String | Key ID, 32 chars hex string                            |
+| `msg`<Req />  | String | Data message to verify (max. 2048 bytes)               |
+| `sign`<Req /> | String | Signature to validate returned by `sign`               |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_PQC_MLDSA_VERIFY | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_PQC_MLDSA_VERIFY | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_PQC_MLDSA_VERIFY | LOG_RESULT_OK | 200 |

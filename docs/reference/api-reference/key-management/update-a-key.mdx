@@ -1,0 +1,50 @@
+---
+title: "Update a key"
+description: "This key management operation allows updating the key label or description fields."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:upd" />
+
+## Update a key
+
+<Endpoint method="POST" path="/api/keymgmt/update" operationId="updateKey" />
+
+Update a key `label` and `descr` fields.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                           |
+| --------------------------------------- | ------ | ------------------------------------- |
+| `kid`<Req /> | String | Key ID, 32-character hex string       |
+| `label`                                 | String | Label of a key                        |
+| `descr`                                 | String | Base64 encoded additional description |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_KEY_ATTRIBUTES_CHANGED | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_KEY_ATTRIBUTES_CHANGED | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_KEY_ATTRIBUTES_CHANGED | LOG_RESULT_OK | 200 |

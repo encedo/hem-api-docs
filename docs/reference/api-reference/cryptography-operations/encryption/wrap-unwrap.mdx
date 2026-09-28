@@ -1,0 +1,154 @@
+---
+title: "Wrap/Unwrap"
+description: "These two endpoint implements the NIST Key Wrapping scheme."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:use:<KID>" />
+
+where `<KID>` is a Key ID as a 32-character hexadecimal string
+
+## Wrap
+
+### Wrap a message
+
+<Endpoint method="POST" path="/api/crypto/cipher/wrap" operationId="cryptoWrap" />
+
+Wrap plain message using the NIST Key Wrapping scheme.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                             |
+| --------------------------------------- | ------ | ------------------------------------------------------- |
+| `alg`                                   | String | Algorithm to use (e.g. AES256)                          |
+| `ext_kid`                               | String | External Key ID, 32 chars hex string                    |
+| `kid`<Req /> | String | Key ID, 32 chars hex string                             |
+| `msg`<Req /> | String | Data message to wrap (max. 2048 bytes)                  |
+| `pubkey`                                | String | Base64 encoded external public key                      |
+| `ctx`                                   | String | Additional context data (HKDF argument) (max. 64 bytes) |
+| `iv`                                    | String | Optional IV data                                        |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "wrapped": "ot5cd+SCF6w9dxdjtLnnr96yIMJQWVzb"
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect arguments" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+:::info
+The key type pointed to `ext_kid` or represented by `pubkey` MUST be the same as the `kid` key type. Otherwise, indirect ECDH will fail.
+:::
+
+#### Possible `alg` values
+
+| Value  | Description               |
+| ------ | ------------------------- |
+| AES128 | Regarding NIST SP 800-38F |
+| AES192 | Regarding NIST SP 800-38F |
+| AES256 | Regarding NIST SP 800-38F |
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `wrapped` | String | Base64 encoded wrapped data |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_WRAP | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_WRAP | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_WRAP | LOG_RESULT_OK | 200 |
+
+## Unwrap
+
+### Unwarp a message
+
+<Endpoint method="POST" path="/api/crypto/cipher/unwrap" operationId="cryptoUnwrap" />
+
+Unwrap the encrypted message using the NIST Key Wrapping scheme.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                             |
+| --------------------------------------- | ------ | ------------------------------------------------------- |
+| `alg`                                   | String | Algorithm to use (e.g. AES256)                          |
+| `ext_kid`                               | String | External Key ID, 32 chars hex string                    |
+| `iv`                                    | String | Ciphertext IV                                           |
+| `kid`<Req /> | String | Key ID, 32 chars hex string                             |
+| `msg`<Req /> | String | Data message to unwrap (max. 2048 bytes)                |
+| `pubkey`                                | String | Base64 encoded external public key                      |
+| `ctx`                                   | String | Additional context data (HKDF argument) (max. 64 bytes) |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "unwrapped": "SGVsbG9Xb3JsZDAxMjM0NQ=="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+:::info
+The key type pointed to `ext_kid` or represented by `pubkey` MUST be the same as the `kid` key type. Otherwise, indirect ECDH will fail.
+:::
+
+#### Possible `alg` values
+
+Check the list [here](wrap-unwrap.mdx#possible-alg-values).
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `unwrapped` | String | Base64 encoded unwraped data |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_UNWRAP | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_UNWRAP | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_UNWRAP | LOG_RESULT_OK | 200 |

@@ -1,0 +1,140 @@
+---
+title: "HMAC"
+description: "Those basic cryptography operations allow the calculation and verify HMAC messages."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:use:<KID>" />
+
+where `<KID>` is a Key ID as a 32-character hexadecimal string
+
+## Hash
+
+### Gen an HMAC of a message
+
+<Endpoint method="POST" path="/api/crypto/hmac/hash" operationId="cryptoHmacHash" />
+
+Return an HMAC of a given message.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                      |
+| --------------------------------------- | ------ | ------------------------------------------------ |
+| `alg`                                   | String | Algorithm to use (e.g. SHA2-256)                 |
+| `ext_kid`                               | String | External Key ID, 32 chars hex string             |
+| `msg`<Req /> | String | Base64 encoded message to hmac (max. 2048 bytes) |
+| `pubkey`                                | String | Base64 encoded external public key               |
+| `kid`<Req /> | String | Key ID, 32 chars hex string                      |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "mac": "otGuoI+uH8K6cWk6Qnx3vNGKDjFv2zTF0dUM73a3YMo="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+:::info
+The key type pointed to `ext_kid` or represented by `pubkey` MUST be the same as the `kid` key type. Otherwise, indirect ECDH will fail.
+:::
+
+#### Possible `alg` values
+
+| Agorithm | Description   |
+| -------- | ------------- |
+| SHA2-256 | SHA2-256 HMAC |
+| SHA2-384 | SHA2-384 HMAC |
+| SHA2-512 | SHA2-512 HMAC |
+| SHA3-256 | SHA3-256 HMAC |
+| SHA3-384 | SHA3-384 HMAC |
+| SHA3-512 | SHA3-512 HMAC |
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `mac` | String | Base64 encoded HMAC value |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_HMAC_HASH | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_HMAC_HASH | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_HMAC_HASH | LOG_RESULT_OK | 200 |
+
+## Verify
+
+### Verify an HMAC of the message
+
+<Endpoint method="POST" path="/api/crypto/hmac/verify" operationId="cryptoHmacVerify" />
+
+Verify the hash of a given message.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                                    |
+| --------------------------------------- | ------ | -------------------------------------------------------------- |
+| `alg`                                   | String | Algorithm to use (e.g. SHA2-256)                               |
+| `ext_kid`                               | String | External Key ID, 32 chars hex string                           |
+| `mac`<Req /> | String | MAC calculated by `hash` operation                             |
+| `msg`<Req /> | String | Base64 encoded HMAC of a message to validate (max. 2048 bytes) |
+| `pubkey`                                | String | Base64 encoded external public key                             |
+| `kid`<Req /> | String | Key ID, 32 chars hex string                                    |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+:::info
+The key type pointed to `ext_kid` or represented by `pubkey` MUST be the same as the `kid` key type. Otherwise, indirect ECDH will fail.
+:::
+
+#### Possible `alg` values
+
+Check the list [here](hmac.mdx#possible-alg-values).
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_HMAC_HASH | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_HMAC_HASH | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_HMAC_HASH | LOG_RESULT_OK | 200 |

@@ -1,0 +1,36 @@
+---
+title: "Shutdown"
+description: "This operation shutdown the device, effectively stopping API and securing the chip in a safe state."
+---
+
+<Roles user master ext />
+
+<Scope main="system:shutdown" alt="system:config" />
+
+## Shutdown
+
+<Endpoint method="GET" path="/api/system/shutdown" operationId="getSystemShutdown" />
+
+Shut down the device and stay in a secure state.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="409" title="Incorrect internal state" />
+</ResponseCodes>
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_SHUTDOWN | LOG_RESULT_OK | 200 |

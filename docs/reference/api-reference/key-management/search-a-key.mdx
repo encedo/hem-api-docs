@@ -1,0 +1,71 @@
+---
+title: "Search a key"
+description: "This key management operation allows searching the repository for a key based on the key 'descr' field."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:search" alt={["keymgmt:list", "auth:ext:pair"]} />
+
+If the configuration option `allow_keysearch` is set to `true`, then the search is possible without the `Authorization` header under the condition of having the minimum first 6 bytes of `descr` field provided.
+
+## Search for a key(s)
+
+<Endpoint method="POST" path="/api/keymgmt/search" operationId="searchKeys" />
+
+Search the keys stored in the repository by pattern.
+
+#### Headers
+
+| Name                                           | Type   | Description       |
+| ---------------------------------------------- | ------ | ----------------- |
+| Authorization                                  | String | Bearer JWT\_TOKEN |
+| Content-Type<Req /> | String | application/json  |
+
+#### Request Body
+
+| Name                                      | Type   | Description                                                |
+| ----------------------------------------- | ------ | ---------------------------------------------------------- |
+| `descr`<Req /> | String | Pattern to search for.                                     |
+| `offset`                                  | Number | Skip `offset` entries.                                     |
+| `limit`                                   | Number | Limit number of return entries, default is 15 if skipped.  |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "offset": 0,
+  "total": 5,
+  "listed": 1,
+  "list": [{
+  	"kid": "4111bc76291bff8d319a056f15bb46f0",
+	"created": 1647802803,
+	"type": "ATT,PKEY,ECDH,CURVE448",
+	"label": "Chris main Transfer key",
+	"descr": "RVRTRlRYNTcyMDc0NzI1MjI1NTE3OWNocmlzQGVuY2Vkby5jb20=",
+	"updated": 1647802803
+  }]
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect argument(s)" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+#### Response data for successful operation
+
+This operation returns the same data as the "_List the keys"_ endpoint. Check for details [here](list-the-keys.mdx#response-data-for-successful-operation).
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |

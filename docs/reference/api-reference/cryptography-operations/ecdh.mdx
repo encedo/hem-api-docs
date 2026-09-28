@@ -1,0 +1,82 @@
+---
+title: "ECDH"
+description: "This basic cryptography operation allows the calculation of the ECDH between a trusted key or by an external public key."
+---
+
+<Roles user master={false} ext />
+
+<Scope main="keymgmt:use:<KID>" />
+
+where `<KID>` is a Key ID as a 32-character hexadecimal string
+
+## Generate ECDH
+
+<Endpoint method="POST" path="/api/crypto/ecdh" operationId="cryptoEcdh" />
+
+Return raw or hashed ECDH results between given arguments.
+
+#### Headers
+
+| Name                                            | Type   | Description       |
+| ----------------------------------------------- | ------ | ----------------- |
+| Authorization<Req /> | String | Bearer JWT\_TOKEN |
+| Content-Type<Req />  | String | application/json  |
+
+#### Request Body
+
+| Name                                    | Type   | Description                                                                          |
+| --------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
+| `alg`                                   | String | Algorithm used to hash the result (e.g. SHA2-256) - if omitted, raw ECDH is returned |
+| `kid`<Req /> | String | Key ID, 32-character hex string                                                      |
+| `pubkey`                                | String | Base64 encoded external public key                                                   |
+| `ext_kid`                               | String | External Key ID, 32-character hex string                                             |
+
+#### Response status code
+
+<ResponseCodes>
+<ResponseCode code="200" title="Operation successful">
+
+```json
+{
+  "ecdh": "AZlsNHaUXGNaPMUg139TwnW5QB7WvVKAMEFnHF3JT122JTTnCHuZ1Z6sc2Hvz3WETWJ0ePKUVRJ5HzxDQ4IzdV=="
+}
+```
+
+</ResponseCode>
+<ResponseCode code="400" title="Incorrect arguments" />
+<ResponseCode code="401" title="Missing or invalid JWT_TOKEN" />
+<ResponseCode code="403" title="Incorrect access scope" />
+<ResponseCode code="409" title="Incorrect internal state" />
+<ResponseCode code="406" title="Operation failed" />
+<ResponseCode code="418" title="TLS connection required" />
+</ResponseCodes>
+
+:::info
+The key type pointed to `ext_kid` or represented by `pubkey` MUST be the same as the `kid` key type. Otherwise, indirect ECDH will fail.
+:::
+
+#### Possible `alg` values
+
+| Value    | Description                          |
+| -------- | ------------------------------------ |
+| SHA2-256 | Use SHA2-256 to hash the ECDH result |
+| SHA2-384 | Use SHA2-384 to hash the ECDH result |
+| SHA2-512 | Use SHA2-512 to hash the ECDH result |
+| SHA3-256 | Use SHA3-256 to hash the ECDH result |
+| SHA3-384 | Use SHA3-384 to hash the ECDH result |
+| SHA3-512 | Use SHA3-512 to hash the ECDH result |
+
+#### Response data for successful operation
+
+| Name | Type | Description |
+|---|---|---|
+| `ecdh` | String | Base64 encoded the ECDH result |
+
+#### Log entries
+
+| Event | Result | Source |
+|---|---|---|
+| LOG_TYPE_FAILED_SCOPE_CHECK | LOG_RESULT_FAILED | 403 |
+| LOG_TYPE_CRYPTO_ECDH | LOG_RESULT_ERROR | 400 |
+| LOG_TYPE_CRYPTO_ECDH | LOG_RESULT_FAILED | 406 |
+| LOG_TYPE_CRYPTO_ECDH | LOG_RESULT_OK | 200 |
