@@ -1,6 +1,6 @@
 # M3 — Content migration (44 pages) + two docs instances + navbar dropdown (revised)
 
-State: draft
+State: in-progress (accepted 2026-09-28)
 
 ## Goal
 All 44 legacy GitBook pages converted to MDX in the GitBook style by a scripted, idempotent converter; sidebar mirroring `SUMMARY.md`; two variants of the reference ("1.2.2" at `/`, "1.2.2 Diag" at `/diag`) from one source folder; navbar version dropdown.
@@ -34,8 +34,9 @@ See `PLAN.md` → "Converter" table (authoritative). Key points: H1 removed (tit
 - User: compare create-a-key, configuration, audit-log, external-authenticator/registration, Welcome and General information with docs.encedo.com on the preview (both variants).
 
 ## Open questions
-- Reproduce the Unsplash cover on Welcome or drop it (recommended: drop)?
-- Keep the "Version: 1.7b (17.01.2026)" line and certified-revision links on Welcome as-is?
+Resolved 2026-09-28:
+- Unsplash cover: **keep as a banner** (downloaded to `static/img/welcome-cover.jpg`, shown above the Welcome title).
+- Version block ("Version: 1.7b (17.01.2026)" + certified-revision links) on Welcome and the API Reference index: **removed entirely**.
 
 ## Conclusions & hand-over
 _(filled when done)_
