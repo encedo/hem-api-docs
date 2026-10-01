@@ -115,6 +115,7 @@ const config: Config = {
           authentication: {preferredSecurityScheme: 'bearerAuth'},
           // No Scalar cloud features: they upload the OpenAPI document to scalar.com (and fail to
           // import it from this site's relative URL). The built-in request client stays available.
+          hideClientButton: true, // "Open API Client": link to the hosted client.scalar.com
           agent: {disabled: true}, // "Ask AI"
           mcp: {disabled: true}, // "Generate MCP" (VS Code / Cursor)
           showDeveloperTools: 'never', // "Developer Tools / Configure / Share / Deploy" toolbar

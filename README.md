@@ -72,8 +72,10 @@ If port 3000 is not reachable, use an SSH tunnel instead:
     version there to upgrade);
   - requests go from the reader's browser to the device (no proxy), so the device's CORS `origin`
     setting must allow the site origin, and the device's TLS certificate must be trusted by the browser.
-  - Scalar's cloud features (Ask AI, Generate MCP, Share/Deploy toolbar) and telemetry are switched
-    off in `docusaurus.config.ts`; they would upload the OpenAPI document to scalar.com.
+  - Scalar's cloud features are switched off in `docusaurus.config.ts`: the "Open API Client" link
+    (it opens the hosted client at client.scalar.com, which cannot load the spec from this site),
+    Ask AI, Generate MCP, the Share/Deploy toolbar and telemetry. Requests are sent with the
+    in-page client: open an operation, press "Test Request", then "Send".
 - **Search** is built into the site (no external service).
 - **Redirects**: every page is also reachable under the old GitBook prefix `/hem-api/…`, so links from
   the previous site keep working once a custom domain points here.
