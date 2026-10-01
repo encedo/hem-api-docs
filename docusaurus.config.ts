@@ -1,4 +1,5 @@
 import {themes as prismThemes} from 'prism-react-renderer';
+import apiTesterConfig from './api-tester.config';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
@@ -97,29 +98,25 @@ const config: Config = {
       },
     ],
     [
-      // Interactive API tester rendering the OpenAPI file.
+      // Interactive API tester rendering the OpenAPI file. Which of Scalar's external-service
+      // features are enabled, and what each one sends where, is documented in api-tester.config.ts.
       '@scalar/docusaurus',
       {
         label: 'API tester',
         route: '/api-tester', // served at <baseUrl>/api-tester
         showNavLink: false, // the navbar item is declared explicitly below
-        // The renderer is loaded from this CDN at runtime; pinned for reproducible builds.
-        // To upgrade: check https://www.npmjs.com/package/@scalar/api-reference and bump the version.
-        cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.72.1',
+        cdn: apiTesterConfig.rendererCdn,
         configuration: {
           url: `${baseUrl}${specFile}`,
-          // The device is reached over the local USB network link from the reader's browser;
-          // Scalar's public proxy could never reach it, so requests go directly.
-          proxyUrl: '',
           hideModels: true,
           authentication: {preferredSecurityScheme: 'bearerAuth'},
-          // No Scalar cloud features: they upload the OpenAPI document to scalar.com (and fail to
-          // import it from this site's relative URL). The built-in request client stays available.
-          hideClientButton: true, // "Open API Client": link to the hosted client.scalar.com
-          agent: {disabled: true}, // "Ask AI"
-          mcp: {disabled: true}, // "Generate MCP" (VS Code / Cursor)
-          showDeveloperTools: 'never', // "Developer Tools / Configure / Share / Deploy" toolbar
-          telemetry: false,
+          hideTestRequestButton: !apiTesterConfig.testRequestButton,
+          proxyUrl: apiTesterConfig.requestProxy,
+          hideClientButton: !apiTesterConfig.openApiClientLink,
+          agent: {disabled: !apiTesterConfig.askAi},
+          mcp: {disabled: !apiTesterConfig.generateMcp},
+          showDeveloperTools: apiTesterConfig.developerToolbar,
+          telemetry: apiTesterConfig.telemetry,
         },
       },
     ],

@@ -15,6 +15,7 @@ Setup and deployment are described in `README.md`.
 | `scripts/check-api-docs.known-gaps.json` | Reviewed and accepted differences between pages and spec (reported as "accepted", not as errors). |
 | `src/components/api/` | Components used by the API pages (`Endpoint`, `Req`, `Roles`, `Scope`, `ResponseCodes`, `ResponseCode`). |
 | `docusaurus.config.ts` | Site configuration: `apiVersion`, the docs instance, the API tester (Scalar), search, redirects. |
+| `api-tester.config.ts` | API tester privacy settings: per feature, whether Scalar's external-service features are enabled, with a description of what each sends to which site. Keep them off unless the owner decides otherwise. |
 
 ```bash
 npm ci                                            # install (Node 24, see .nvmrc)

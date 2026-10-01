@@ -23,6 +23,7 @@ Source of the developer documentation for the Encedo HEM REST API, built with
 | `src/css/custom.css`, `src/fonts.ts` | Styling (Encedo palette) and self-hosted fonts (Inter, IBM Plex Mono). |
 | `static/img/` | Logo, favicon, product photos, cover image. |
 | `docusaurus.config.ts` | Site configuration: URL and base path, `apiVersion`, the docs instance, the API tester, search, redirects. |
+| `api-tester.config.ts` | API tester privacy settings: which Scalar external-service features are enabled and what they send. |
 | `sidebars.ts` | Sidebar (mirrors the original GitBook table of contents). |
 | `redocly.yaml` | Lint configuration for the OpenAPI files (`npm run lint:spec`). |
 | `.github/workflows/` | CI: `deploy.yml` builds and deploys to GitHub Pages, `pr-check.yml` builds pull requests. |
@@ -68,14 +69,13 @@ If port 3000 is not reachable, use an SSH tunnel instead:
   still tagged `diag`).
 - **API tester** at `/api-tester`: [Scalar](https://scalar.com) renders `api/hem-api-<version>.yaml`
   and can send requests from the browser directly to a device. Notes:
-  - the renderer is loaded at runtime from a pinned CDN URL (`cdn` in `docusaurus.config.ts`; bump the
-    version there to upgrade);
   - requests go from the reader's browser to the device (no proxy), so the device's CORS `origin`
-    setting must allow the site origin, and the device's TLS certificate must be trusted by the browser.
-  - Scalar's cloud features are switched off in `docusaurus.config.ts`: the "Open API Client" link
-    (it opens the hosted client at client.scalar.com, which cannot load the spec from this site),
-    Ask AI, Generate MCP, the Share/Deploy toolbar and telemetry. Requests are sent with the
-    in-page client: open an operation, press "Test Request", then "Send".
+    setting must allow the site origin, and the device's TLS certificate must be trusted by the browser;
+  - **[`api-tester.config.ts`](api-tester.config.ts)** lists every Scalar feature that contacts an
+    external site (hosted "Open API Client", Ask AI, Generate MCP, Share/Deploy toolbar, request
+    proxy, telemetry, the renderer CDN), what each sends where (including visitor data), and switches
+    them on or off. All external features are off; requests are sent with the in-page client only
+    (open an operation, press "Test Request", then "Send").
 - **Search** is built into the site (no external service).
 - **Redirects**: every page is also reachable under the old GitBook prefix `/hem-api/…`, so links from
   the previous site keep working once a custom domain points here.
