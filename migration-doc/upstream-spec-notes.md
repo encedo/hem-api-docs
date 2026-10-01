@@ -25,3 +25,6 @@ repository is canonical for the spec, so these are not applied here; carry them 
   `mldsa/verify`; 400 on `keymgmt/list*`; 400/406/409 on `GET /api/system/config` (they belong to POST);
   403/409 on `GET /api/system/selftest`; body field `exp` on `POST /api/auth/ext/request` (the token
   lifetime is fixed by the device: 60 min, 15 min for a crypto scope — api_auth.c:1296-1316, 1495).
+
+## Published spec vs. firmware spec
+The published copy (`api/hem-api-<version>.yaml`) excludes all operations tagged `diag` (DIAG-build-only, incl. `upload_bootldr` and `install_bl`) and the `diag` tag; `scripts/strip-diag-spec.mjs` performs the removal. If the firmware repository ever generates a public spec itself, it should apply the same rule.

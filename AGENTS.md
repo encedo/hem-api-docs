@@ -7,31 +7,31 @@ Setup and deployment are described in `README.md`.
 
 | Path | Purpose |
 |---|---|
-| `api/hem-api-<version>.yaml` | OpenAPI 3.0 description of the firmware API, **the source of truth for API facts**. One file per API/firmware version. It is a copy of `docs/openapi.yaml` from the `encedo_firmware` repository at the release tag; that repository is canonical. |
+| `api/hem-api-<version>.yaml` | OpenAPI 3.0 description of the firmware API, **the source of truth for API facts**. One file per API/firmware version. It is a copy of `docs/openapi.yaml` from the `encedo_firmware` repository at the release tag (that repository is canonical), **with the DIAG-build-only operations removed** (§2, item 3). |
 | `docs/` | The documentation pages (Markdown/MDX). `docs/reference/api-reference/**` holds the hand-written API reference, one page per topic, one block per operation. |
-| `docs/reference/api-reference/diagnostics/` | Pages for DIAG-build-only endpoints. Shown only in the "Diag" variant of the site (see §2). |
-| `docs-diag/` | Build-time copy of `docs/` for the Diag variant, made by `scripts/sync-diag-docs.mjs`. Gitignored, never edit. |
-| `sidebars.ts`, `sidebars-diag-items.json`, `sidebars-diag.ts` | Sidebar of the default variant; the Diagnostics items appended for the Diag variant. |
+| `sidebars.ts` | Sidebar (mirrors the original GitBook table of contents). |
 | `scripts/check-api-docs.mjs` | Compares the API pages with the OpenAPI file. Run it before and after every change to the API reference. |
+| `scripts/strip-diag-spec.mjs` | Removes DIAG-build-only operations (tag `diag`) from a spec file. Run it on every spec copied from the firmware repository. |
 | `scripts/check-api-docs.known-gaps.json` | Reviewed and accepted differences between pages and spec (reported as "accepted", not as errors). |
 | `src/components/api/` | Components used by the API pages (`Endpoint`, `Req`, `Roles`, `Scope`, `ResponseCodes`, `ResponseCode`). |
-| `docusaurus.config.ts` | Site configuration: `apiVersion`, the two docs instances, the API tester (Scalar). |
+| `docusaurus.config.ts` | Site configuration: `apiVersion`, the docs instance, the API tester (Scalar), search, redirects. |
 
 ```bash
 npm ci                                            # install (Node 24, see .nvmrc)
 npm run lint:spec                                 # validate api/*.yaml (Redocly)
 npm run check:api                                 # spec ↔ pages report (add --strict to fail on errors)
 npm run typecheck                                 # TypeScript config files
-npm run build                                     # full build; fails on broken links/anchors (runs sync:diag first)
+node scripts/strip-diag-spec.mjs api/<file>.yaml  # remove DIAG-only operations from a freshly copied spec
+npm run build                                     # full build; fails on broken links/anchors
 npm run serve -- --host 0.0.0.0 --port 3000       # preview the build on a headless server
-npm start                                         # dev server on 0.0.0.0:3000 (docs-diag/ is copied once; rerun `npm run sync:diag` after edits)
+npm start                                         # dev server on 0.0.0.0:3000
 ```
 
 ## 2. Invariants
 
 1. **The OpenAPI file is the source of truth for API facts** (paths, methods, parameters, body fields, required flags, enum values, response codes, required scope). The pages add explanations, examples, log entries and conventions. When they disagree, fix the page, or fix the spec upstream in `encedo_firmware` and copy it here.
 2. **Every operation of the spec has exactly one `<Endpoint … operationId="…" />` block** in `docs/reference/api-reference/**`. The checker matches blocks to operations by `operationId`.
-3. **Two variants from one source.** The default site (`/`) excludes `docs/reference/api-reference/diagnostics/**`; the Diag variant (`/diag`) includes it. Diagnostics pages are listed only in `sidebars-diag-items.json`, never in `sidebars.ts`. A non-diag page must never link to a diagnostics page (the default build would fail on the broken link).
+3. **DIAG-build-only endpoints are never published.** The firmware's OpenAPI description contains endpoints that exist only in diagnostic firmware builds (tag `diag`: `/api/diag/*` and the bootloader upgrade endpoints). When a spec is copied or generated from the firmware repository, remove them before committing: `node scripts/strip-diag-spec.mjs api/hem-api-<version>.yaml`. The checker reports an error for any operation still tagged `diag`, and no page documents them.
 4. **Links between pages are relative file links** (`../key-management/create-a-key.mdx#possible-type-values`), never absolute site URLs, so they resolve inside the current variant.
 5. **Page template** (§3) is mandatory for API pages; the checker depends on it.
 6. Commit messages: short imperative title plus bullets. No `Co-Authored-By` trailers.
@@ -129,10 +129,11 @@ Other conventions: `.mdx` for API pages, `.md` for prose; section index pages ar
 
 Use this when `encedo_firmware` changed the API and `docs/openapi.yaml` there was updated, without a new firmware version, or when a page is found to be wrong.
 
-1. Copy the new spec over `api/hem-api-<version>.yaml` (keep the header comment). Run `npm run lint:spec`; it must print "valid".
+1. Copy the new spec over `api/hem-api-<version>.yaml` (keep the header comment), run `node scripts/strip-diag-spec.mjs api/hem-api-<version>.yaml`, then `npm run lint:spec`; it must print "valid".
 2. Run `npm run check:api`. Every line is either an **error** (page and spec disagree on a fact), a **warning** (worth a look: scope/role wording, missing enum table) or **accepted** (listed in `known-gaps.json`).
 3. For each error, edit the page following the template:
-   - *no page section for …* → add a `## …` block with `<Endpoint … operationId="…" />` on the page of the same topic (spec `tags` tell you which); a new topic gets a new page and an entry in `sidebars.ts` (or in `sidebars-diag-items.json` for DIAG-only endpoints, under `docs/reference/api-reference/diagnostics/`).
+   - *no page section for …* → add a `## …` block with `<Endpoint … operationId="…" />` on the page of the same topic (spec `tags` tell you which); a new topic gets a new page and an entry in `sidebars.ts`.
+   - *operation is tagged "diag"* → the spec still contains DIAG-only endpoints: run `node scripts/strip-diag-spec.mjs api/hem-api-<version>.yaml`.
    - *response code N missing* → add `<ResponseCode code="N" title="…" />` in ascending order; titles: `statusTexts.ts` or the spec's response description.
    - *body field missing / required flag* → add the row or fix the `<Req />` marker; take the description from the spec.
    - *page-only field / response code* → the page claims something the spec does not. Verify against the firmware. Either remove it from the page, or fix the spec upstream (then copy it here), or, if it is a documented spec omission you cannot fix now, add an entry to `scripts/check-api-docs.known-gaps.json` with a reason.
@@ -144,16 +145,12 @@ Use this when `encedo_firmware` changed the API and `docs/openapi.yaml` there wa
 
 ## 5. Procedure B — a new firmware / API version (example: 1.3.0)
 
-1. Add the new spec as `api/hem-api-1.3.0.yaml` (copy from `encedo_firmware/docs/openapi.yaml` at the release tag; set `info.version`; keep the header comment). Add `hem@1.3.0` to `redocly.yaml`. `npm run lint:spec`.
-2. Snapshot the current reference as the old version (default instance only): `npm run docusaurus -- docs:version 1.2.2`. This creates `versioned_docs/version-1.2.2/`, `versioned_sidebars/version-1.2.2-sidebars.json` and `versions.json`; commit them. **Never run `docs:version:diag`**: `scripts/sync-diag-docs.mjs` mirrors the snapshots to `diag_versioned_docs/`, `diag_versioned_sidebars/` (with the Diagnostics items appended) and `diag_versions.json` automatically (all gitignored).
-3. In `docusaurus.config.ts` set `apiVersion = '1.3.0'`. Configure the versions of both instances, for example:
-   - default instance: `lastVersion: 'current'`, `versions: {current: {label: '1.3.0', path: ''}, '1.2.2': {label: '1.2.2', path: '1.2.2'}}`
-   - diag instance: `versions: {current: {label: '1.3.0 Diag', path: '', noIndex: true}, '1.2.2': {label: '1.2.2 Diag', path: '1.2.2', noIndex: true}}`
-   - navbar dropdown: add items for `1.2.2` (`/1.2.2`) and `1.2.2 Diag` (`/diag/1.2.2`).
-   - The API tester follows `apiVersion` (`configuration.url`); older specs remain downloadable at `/hem-api-docs/hem-api-1.2.2.yaml`.
+1. Add the new spec as `api/hem-api-1.3.0.yaml` (copy from `encedo_firmware/docs/openapi.yaml` at the release tag; set `info.version`; keep the header comment), run `node scripts/strip-diag-spec.mjs api/hem-api-1.3.0.yaml`, add `hem@1.3.0` to `redocly.yaml`, `npm run lint:spec`.
+2. Snapshot the current reference as the old version: `npm run docusaurus -- docs:version 1.2.2`. This creates `versioned_docs/version-1.2.2/`, `versioned_sidebars/version-1.2.2-sidebars.json` and `versions.json`; commit them.
+3. In `docusaurus.config.ts` set `apiVersion = '1.3.0'` and configure the versions of the docs instance, for example `lastVersion: 'current'`, `versions: {current: {label: '1.3.0', path: ''}, '1.2.2': {label: '1.2.2', path: '1.2.2'}}`; add a navbar dropdown item for `1.2.2` (`/1.2.2`). The API tester follows `apiVersion` (`configuration.url`); older specs remain downloadable at `/hem-api-docs/hem-api-1.2.2.yaml`.
 4. Update `docs/` for 1.3.0 with Procedure A (`npm run check:api` uses the highest version in `api/` by default; check an old snapshot with `node scripts/check-api-docs.mjs --spec api/hem-api-1.2.2.yaml --docs versioned_docs/version-1.2.2`).
 5. Update the firmware version mentioned in `docs/preliminary/quick-start.md` and elsewhere (`grep -rn "1\.2\.2" docs/`), and `README.md`.
-6. `npm run typecheck && npm run build`; check `build/1.2.2/`, `build/diag/1.2.2/` and the dropdown; commit.
+6. `npm run typecheck && npm run build`; check `build/1.2.2/` and the dropdown; commit.
 
 ## 6. Validation checklist
 
@@ -172,5 +169,4 @@ committed version and silently discards uncommitted edits to that file.
 ## 8. Known limitations
 
 - The checker compares structure (operations, parameters, fields, required flags, enums, response codes, scope tokens, master role). It cannot judge prose, examples or log-entry tables.
-- `docs-diag/` is copied when `start`/`build` run; during `npm start`, re-run `npm run sync:diag` (or `node scripts/sync-diag-docs.mjs --watch`) after editing `docs/` to refresh the Diag variant.
 - The API tester (Scalar) loads its renderer from a pinned CDN URL (`cdn` in `docusaurus.config.ts`) and sends requests directly from the browser: the device's CORS `origin` setting must allow the site origin and its TLS certificate must be trusted by the browser.

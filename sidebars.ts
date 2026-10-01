@@ -5,8 +5,6 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 // Explicit sidebar mirroring the original GitBook table of contents (legacy SUMMARY.md).
 // Section headers ("Preliminary", "Security", "Reference") are non-collapsible labels, as in
 // GitBook: `html` items styled by `.sidebar-heading` in src/css/custom.css.
-// Diagnostics pages are NOT listed here (the default instance excludes them); they live in
-// sidebars-diag-items.json and are appended by sidebars-diag.ts for the /diag variant.
 const sidebars: SidebarsConfig = {
   docs: [
     {type: 'doc', id: 'index', label: 'Welcome'},

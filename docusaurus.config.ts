@@ -16,15 +16,7 @@ const baseUrl = '/hem-api-docs/';
 const apiVersion = '1.2.2';
 const specFile = `hem-api-${apiVersion}.yaml`;
 
-// Two variants of the reference are built from ONE source tree (docs/):
-//   default instance  → "/"      without the Diagnostics pages (DIAG firmware builds only)
-//   "diag" instance   → "/diag"  everything, read from docs-diag/, a copy made by
-//                                scripts/sync-diag-docs.mjs before start/build (gitignored).
-// Default excludes of @docusaurus/plugin-content-docs (GlobExcludeDefault), repeated here
-// because passing `exclude` replaces them.
-const GLOB_EXCLUDE_DEFAULT = ['**/_*.{js,jsx,ts,tsx,md,mdx}', '**/_*/**', '**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**'];
-const DIAG_PAGES = 'reference/api-reference/diagnostics/**';
-// Both instances edit the same source files under docs/.
+// "Edit this page" links point at the docs/ folder on the main branch.
 const editUrl = ({docPath}: {docPath: string}) => `https://github.com/encedo/hem-api-docs/edit/main/docs/${docPath}`;
 
 const config: Config = {
@@ -74,15 +66,10 @@ const config: Config = {
           // Docs-only mode: the documentation is served from the site root.
           routeBasePath: '/',
           sidebarPath: './sidebars.ts',
-          exclude: [...GLOB_EXCLUDE_DEFAULT, DIAG_PAGES],
           editUrl,
         },
         blog: false,
         pages: false,
-        sitemap: {
-          // The Diag variant duplicates every page; keep it out of the sitemap (noIndex below too).
-          ignorePatterns: [`${baseUrl}diag/**`],
-        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -101,9 +88,8 @@ const config: Config = {
           if (existingPath === '/') {
             return ['/hem-api'];
           }
-          // Only the default reference gets the old prefix (not the Diag variant, the tester, the
-          // search page or the 404 page).
-          if (/^\/(diag|api-tester|search|404\.html)(\/|$)/.test(existingPath) || existingPath.startsWith('/hem-api')) {
+          // Not for the tester, the search page or the 404 page.
+          if (/^\/(api-tester|search|404\.html)(\/|$)/.test(existingPath) || existingPath.startsWith('/hem-api')) {
             return undefined;
           }
           return [`/hem-api${existingPath}`];
@@ -111,22 +97,7 @@ const config: Config = {
       },
     ],
     [
-      // "1.2.2 Diag" variant of the reference: same pages plus the Diagnostics section.
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'diag',
-        path: 'docs-diag',
-        routeBasePath: 'diag',
-        sidebarPath: './sidebars-diag.ts',
-        exclude: GLOB_EXCLUDE_DEFAULT,
-        editUrl,
-        versions: {
-          current: {label: `${apiVersion} Diag`, noIndex: true},
-        },
-      },
-    ],
-    [
-      // Interactive API tester rendering the full OpenAPI file (all operations, incl. DIAG-only).
+      // Interactive API tester rendering the OpenAPI file.
       '@scalar/docusaurus',
       {
         label: 'API tester',
@@ -158,8 +129,6 @@ const config: Config = {
         indexPages: false,
         language: ['en'],
         highlightSearchTermsOnTargetPage: true,
-        // The Diag variant duplicates every page; index the default variant only.
-        ignoreFiles: [/^diag(\/|$)/],
       },
     ],
   ],
@@ -178,14 +147,12 @@ const config: Config = {
       },
       items: [
         {
-          // Version-style switch between the two variants of the reference.
+          // API version switch. One entry today; AGENTS.md "Procedure B" adds entries for older
+          // versions when a new firmware version is documented.
           type: 'dropdown',
           label: `v${apiVersion}`,
           position: 'left',
-          items: [
-            {label: apiVersion, to: '/', activeBaseRegex: `^${baseUrl}(?!diag(/|$)|api-tester(/|$))`},
-            {label: `${apiVersion} Diag`, to: '/diag', activeBaseRegex: `^${baseUrl}diag(/|$)`},
-          ],
+          items: [{label: apiVersion, to: '/', activeBaseRegex: `^${baseUrl}(?!api-tester(/|$))`}],
         },
         {to: '/api-tester', label: 'API tester', position: 'left'},
         {

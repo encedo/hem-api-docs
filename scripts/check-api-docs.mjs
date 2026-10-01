@@ -103,6 +103,10 @@ for (const [path, item] of Object.entries(spec.paths)) {
 }
 const opsById = new Map(ops.map((o) => [o.operationId, o]));
 
+// DIAG-build-only operations are not part of the published API and must not be in the spec file
+// (see AGENTS.md; run scripts/strip-diag-spec.mjs after copying a spec from the firmware repository).
+const diagOps = ops.filter((o) => o.tags.includes('diag'));
+
 // ----------------------------------------------------------------------------- page model
 function walk(dir) {
   const out = [];
@@ -205,6 +209,7 @@ function parsePage(file) {
 // ----------------------------------------------------------------------------- comparison
 const findings = [];
 const add = (severity, page, op, message) => findings.push({severity, page, operationId: op, message});
+for (const o of diagOps) add('error', null, o.operationId, `operation is tagged "diag" (DIAG builds only) — remove it from the spec with scripts/strip-diag-spec.mjs`);
 const CONVENTIONAL_HEADERS = new Set(['authorization', 'content-type', 'expect', 'content-length']);
 
 const pages = walk(API_DIR).map(parsePage);

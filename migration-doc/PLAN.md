@@ -4,6 +4,8 @@
 
 ## Status
 
+> **Revision 3 (2026-10-01):** the "1.2.2 Diag" variant and all DIAG-build-only content were removed again (user decision at the M6 review, see `decisions.md`). The variant design described below in "Design details" is historical; the site has one docs instance and the spec file excludes diag-tagged operations (`scripts/strip-diag-spec.mjs`).
+
 | Milestone | Title | State | Commit |
 |---|---|---|---|
 | M0 | Bookkeeping: plan, decisions, drafts | done | b14abe2 |

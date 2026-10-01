@@ -7,11 +7,6 @@
 # Generated files
 /.docusaurus
 /.cache-loader
-# Mirror of docs/ for the Diag docs instance (scripts/sync-diag-docs.mjs)
-/docs-diag/
-/diag_versioned_docs/
-/diag_versioned_sidebars/
-/diag_versions.json
 
 # Misc
 .DS_Store

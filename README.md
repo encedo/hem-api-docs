@@ -15,16 +15,15 @@ Source of the developer documentation for the Encedo HEM REST API, built with
 | Path | Purpose |
 |---|---|
 | `docs/` | Documentation pages (Markdown/MDX). `docs/index.md` is the landing page; `docs/reference/api-reference/**` is the hand-written API reference, one `<Endpoint>` block per operation. |
-| `docs/reference/api-reference/diagnostics/` | Endpoints that exist only in DIAG firmware builds. Published only in the "Diag" variant of the site (`/diag`). |
-| `api/hem-api-<version>.yaml` | OpenAPI 3.0 description of the API, one file per API/firmware version. **Source of truth for API facts.** A copy of `docs/openapi.yaml` from the `encedo_firmware` repository (which is canonical) at the release tag. |
+| `api/hem-api-<version>.yaml` | OpenAPI 3.0 description of the API, one file per API/firmware version. **Source of truth for API facts.** A copy of `docs/openapi.yaml` from the `encedo_firmware` repository (which is canonical) at the release tag, with the DIAG-build-only endpoints removed. |
 | `scripts/check-api-docs.mjs` | Compares the API pages with the OpenAPI file (`npm run check:api`). `scripts/check-api-docs.known-gaps.json` lists reviewed, accepted differences. |
-| `scripts/sync-diag-docs.mjs` | Copies `docs/` to `docs-diag/` (gitignored) for the Diag variant before `start`/`build`. |
+| `scripts/strip-diag-spec.mjs` | Removes the DIAG-build-only endpoints (tag `diag`) from a spec copied from the firmware repository. |
 | `src/components/api/`, `src/components/ContentRef.tsx` | Components used by the pages (endpoint line, method badge, roles, scope, response tabs, link cards). Registered globally in `src/theme/MDXComponents.tsx`. |
 | `src/theme/` | Small theme overrides: page subtitle (`DocItem/Content`), card headings without icons (`DocCard/Heading`). |
 | `src/css/custom.css`, `src/fonts.ts` | Styling (Encedo palette) and self-hosted fonts (Inter, IBM Plex Mono). |
 | `static/img/` | Logo, favicon, product photos, cover image. |
-| `docusaurus.config.ts` | Site configuration: URL and base path, `apiVersion`, the two docs instances, the API tester, search, redirects. |
-| `sidebars.ts`, `sidebars-diag-items.json`, `sidebars-diag.ts` | Sidebar of the default variant; the Diagnostics entries appended for the Diag variant. |
+| `docusaurus.config.ts` | Site configuration: URL and base path, `apiVersion`, the docs instance, the API tester, search, redirects. |
+| `sidebars.ts` | Sidebar (mirrors the original GitBook table of contents). |
 | `redocly.yaml` | Lint configuration for the OpenAPI files (`npm run lint:spec`). |
 | `.github/workflows/` | CI: `deploy.yml` builds and deploys to GitHub Pages, `pr-check.yml` builds pull requests. |
 
@@ -53,19 +52,20 @@ npm run serve -- --host 0.0.0.0 --port 3000
 ```
 
 `npm start` runs the development server with hot reload, also bound to `0.0.0.0:3000` (it does not
-run the broken-link checks; use `npm run build` for that). The Diag variant is a copy made before
-`start`; after editing `docs/`, run `npm run sync:diag` (or `node scripts/sync-diag-docs.mjs --watch`)
-to refresh it.
+run the broken-link checks; use `npm run build` for that).
 
 If port 3000 is not reachable, use an SSH tunnel instead:
 `ssh -L 3000:127.0.0.1:3000 <user>@<server>` and open <http://localhost:3000/hem-api-docs/>.
 
 ## Site structure
 
-- **Default reference** at `/` (firmware 1.2.2, production endpoints).
-- **"1.2.2 Diag" variant** at `/diag`: the same pages plus the Diagnostics section for DIAG firmware
-  builds. Both are built from `docs/`; the navbar dropdown switches between them. The Diag variant is
-  excluded from search, sitemap and indexing.
+- **Reference** at `/` (firmware 1.2.2, production endpoints). The navbar dropdown lists the API
+  versions (one today).
+- **DIAG-build-only endpoints are not published.** The firmware's OpenAPI description also covers
+  endpoints that exist only in diagnostic firmware builds (`/api/diag/*`, bootloader upgrade). When a
+  spec is copied or generated from the firmware repository, remove them before committing:
+  `node scripts/strip-diag-spec.mjs api/hem-api-<version>.yaml` (the checker fails on any operation
+  still tagged `diag`).
 - **API tester** at `/api-tester`: [Scalar](https://scalar.com) renders `api/hem-api-<version>.yaml`
   and can send requests from the browser directly to a device. Notes:
   - the renderer is loaded at runtime from a pinned CDN URL (`cdn` in `docusaurus.config.ts`; bump the
@@ -80,8 +80,9 @@ If port 3000 is not reachable, use an SSH tunnel instead:
 
 - Editing pages: `docs/**`. API reference pages follow the template in [`AGENTS.md`](AGENTS.md) §3.
 - **The API changed** (same firmware version): copy the updated `docs/openapi.yaml` from the
-  `encedo_firmware` repository over `api/hem-api-<version>.yaml`, then follow Procedure A in
-  [`AGENTS.md`](AGENTS.md) (lint → `npm run check:api` → fix pages → build).
+  `encedo_firmware` repository over `api/hem-api-<version>.yaml`, strip the DIAG-only endpoints
+  (`node scripts/strip-diag-spec.mjs …`), then follow Procedure A in [`AGENTS.md`](AGENTS.md)
+  (lint → `npm run check:api` → fix pages → build).
 - **A new firmware / API version**: follow Procedure B in [`AGENTS.md`](AGENTS.md) (new spec file,
   `docs:version` snapshot of the old reference, `apiVersion` and version settings in
   `docusaurus.config.ts`, navbar dropdown entries).

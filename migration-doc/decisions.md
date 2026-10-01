@@ -65,3 +65,12 @@ Open items carried over: canonical home of the spec (M4/M6); legacy-only fields 
 | Master denied on ext-auth and storage endpoints (pages) vs silent spec | Pages kept; accepted in `scripts/check-api-docs.known-gaps.json` | Firmware denies role M (ext-auth: U only; storage: intended, buggy check) — spec fix upstream |
 | Enum tables on derive/import | Added from the spec instead of linking to create-a-key | The allowed `type` sets differ per operation |
 | `emp`/`key`/`crt` on configuration POST | Moved under "Members of the `tls` object" | They are members of `tls`, not top-level fields |
+
+## 2026-10-01 — Diag section removed (change of plans during the M6 review)
+
+| Topic | Decision | Reason |
+|---|---|---|
+| DIAG-build-only endpoints | **Not published at all**: removed from the site (Diagnostics pages, the "1.2.2 Diag" variant with its second docs instance, `docs-diag/` copy, sync script, diag sidebar files) **and from the spec file** (`scripts/strip-diag-spec.mjs` removed 11 operations: 9 × `/api/diag/*`, `upload_bootldr`, `install_bl`; the `diag` tag; the DIAG conventions bullet) | User decision (supersedes "include diag" of 2026-09-27 and the variant design of revision 2) |
+| Bootloader endpoints | Removed with the diag section | DIAG-only per the spec |
+| Navbar dropdown | Kept with a single entry ("1.2.2") for future versions | User decision |
+| Rule for future specs | A spec copied/generated from the firmware repository must have the diag operations stripped before commit; the checker errors on any `diag`-tagged operation; documented in README and AGENTS.md | User request |
